@@ -1,17 +1,23 @@
 # Object files
 *.o
+obj/*
+
+# Fichiers inutiles
+*.depend
+*.layout
 
 # Libraries
-*.lib
-*.a
+#*.lib
+#*.a
 
 # Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+#*.dll
+#*.so
+#*.so.*
+#*.dylib
 
 # Executables
 *.exe
 *.out
 *.app
+bin/*
