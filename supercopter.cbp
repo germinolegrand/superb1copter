@@ -30,6 +30,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=c11" />
 			<Add directory="SDL/include" />
 		</Compiler>
 		<Linker>
@@ -38,6 +39,18 @@
 			<Add option="-lSDL" />
 			<Add directory="SDL/lib" />
 		</Linker>
+		<Unit filename="GameControl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="GameControl.h" />
+		<Unit filename="GameResources.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="GameResources.h" />
+		<Unit filename="GameShow.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="GameShow.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>

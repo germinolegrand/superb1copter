@@ -2,22 +2,48 @@
 #include <stdio.h>
 #include <SDL/SDL.h>
 
+#include "GameResources.h"
+#include "GameShow.h"
+
 typedef struct Movement Movement;
 struct Movement
 {
     int x, y;
 };
 
+
+
+
+
+
+
+void loadLevel(unsigned int level, GameResources *res, GameShowObjects *gso)
+{
+    if(level == 1)
+    {
+        gso->buildingsNb = 0;
+
+        gso->helicoPosition.x = 400;
+        gso->helicoPosition.y = 100;
+        gso->helico = res->helicoR;
+    }
+}
+
+
+
+
 int main(int argc, char* argv[])
 {
     int continuer = 1;
     SDL_Event event;
-    SDL_Surface *ecran = NULL, *helicoL = NULL, *helicoR = NULL;
-    SDL_Rect position = {50, 100};
-    SDL_Surface *helico = NULL;
+    SDL_Surface *ecran = NULL;
+    SDL_Rect positionBackground = {0, 0};
 
     Movement mvt = {0,0};
     int tempsPrecedent = 0, tempsActuel = 0;
+
+    GameResources gResources;
+    GameShowObjects gShowObjects;
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -25,10 +51,8 @@ int main(int argc, char* argv[])
     SDL_WM_SetCaption("Supercopter", NULL);
     SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 17, 206, 112));
 
-    helicoL = SDL_LoadBMP("helicopterL.bmp");
-    helicoR = SDL_LoadBMP("helicopterR.bmp");
-
-    helico = helicoR;
+    loadResources(&gResources);
+    loadLevel(1, &gResources, &gShowObjects);
 
     while(continuer)
     {
@@ -80,30 +104,29 @@ int main(int argc, char* argv[])
             }
         }
 
-        tempsActuel = SDL_GetTicks();
-
-        if(tempsActuel - tempsPrecedent > 10)
-        {
-            position.x += mvt.x * 5;
-            position.y += mvt.y * 5;
-
-            helico = !mvt.x ? helico : (mvt.x > 0 ? helicoR : helicoL);
-
-            tempsPrecedent = tempsActuel;
-        }
+//        tempsActuel = SDL_GetTicks();
+//
+//        if(tempsActuel - tempsPrecedent > 10)
+//        {
+//            positionBackground.x += mvt.x * 5;
+//            helicoPosition.y += mvt.y * 5;
+//
+//            helico = !mvt.x ? helico : (mvt.x > 0 ? helicoR : helicoL);
+//
+//            tempsPrecedent = tempsActuel;
+//        }
 
         SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 17, 206, 112));
 
-        SDL_SetColorKey(helico, SDL_SRCCOLORKEY, SDL_MapRGB(helico->format, 255, 0, 255));
-        SDL_BlitSurface(helico, NULL, ecran, &position);
+        showGame(ecran, &gShowObjects);
 
         SDL_Flip(ecran);
     }
 
-    SDL_FreeSurface(helicoL);
-    SDL_FreeSurface(helicoR);
+    freeResources(&gResources);
 
     SDL_Quit();
 
     return EXIT_SUCCESS;
 }
+
