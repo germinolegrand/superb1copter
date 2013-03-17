@@ -9,6 +9,9 @@ struct GameShowObjects
     SDL_Surface *helico;
     SDL_Rect helicoPosition;
 
+    SDL_Surface *base;
+    SDL_Rect basePosition;
+
     SDL_Surface *buildings[100];
     SDL_Rect buildingsPosition[100];
     unsigned int buildingsNb;

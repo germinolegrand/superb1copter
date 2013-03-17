@@ -8,6 +8,7 @@ struct GameResources
 {
     SDL_Surface *helicoL,
                 *helicoR,
+                *base,
                 *building;
 };
 
