@@ -12,6 +12,8 @@ struct GameShowObjects
     SDL_Surface *buildings[100];
     SDL_Rect buildingsPosition[100];
     unsigned int buildingsNb;
+
+    SDL_Rect backgroundPosition;
 };
 
 void showGame(SDL_Surface *ecran, GameShowObjects *gso);
