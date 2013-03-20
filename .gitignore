@@ -5,6 +5,7 @@ obj/*
 # Fichiers inutiles
 *.depend
 *.layout
+*.cbTemp
 
 # Libraries
 #*.lib
