@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 
         SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 17, 206, 112));
 
-        showGame(ecran, &gShowObjects);
+        showGame(ecran, &gShowObjects, SDL_GetTicks());
 
         SDL_Flip(ecran);
     }

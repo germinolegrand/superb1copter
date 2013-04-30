@@ -1,6 +1,6 @@
 #include "GameShow.h"
 
-void showGame(SDL_Surface *ecran, GameShowObjects *gso)
+void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime)
 {
     for(unsigned int i = 0; i < gso->buildingsNb; ++i)
     {
@@ -39,9 +39,22 @@ void showGame(SDL_Surface *ecran, GameShowObjects *gso)
 
         SDL_Rect bhframeRect = gso->hostages[i]->clip_rect;
         bhframeRect.w = gso->hostages[i]->h;
-        bhframeRect.x = gso->hostagesFrame*gso->hostages[i]->h;
+        bhframeRect.x = (currentTime/500)%2*gso->hostages[i]->h;
 
         SDL_BlitSurface(gso->hostages[i], &bhframeRect, ecran, &bhRect);
+    }
+
+    for(unsigned int i = 0; i < gso->baseHostagesNb; ++i)
+    {
+        SDL_Rect bhRect = gso->baseHostagesPosition[i];
+        bhRect.x += gso->backgroundPosition.x;
+        bhRect.y += gso->backgroundPosition.y;
+
+        SDL_Rect bhframeRect = gso->baseHostages[i]->clip_rect;
+        bhframeRect.w = gso->baseHostages[i]->h;
+        bhframeRect.x = (currentTime/500)%2*gso->baseHostages[i]->h;
+
+        SDL_BlitSurface(gso->baseHostages[i], &bhframeRect, ecran, &bhRect);
     }
 
     ///Interface

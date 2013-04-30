@@ -23,8 +23,11 @@ struct GameShowObjects
 
     SDL_Surface *hostages[100];
     SDL_Rect hostagesPosition[100];
-    unsigned int hostagesFrame;
     unsigned int hostagesNb;
+
+    SDL_Surface *baseHostages[100];
+    SDL_Rect baseHostagesPosition[100];
+    unsigned int baseHostagesNb;
 
     SDL_Rect backgroundPosition;
 
@@ -33,6 +36,6 @@ struct GameShowObjects
     SDL_Surface *interface_hostagesWaiting;
 };
 
-void showGame(SDL_Surface *ecran, GameShowObjects *gso);
+void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime);
 
 #endif // GAMESHOW_H
