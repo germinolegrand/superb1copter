@@ -50,9 +50,12 @@ void loadLevel(unsigned int level, GameControl *ctrl)
         gso->backgroundPosition.x = 400 - gso->basePosition.x - gso->base->w/2;
         gso->backgroundPosition.y = 400;
 
+        ctrl->minimumHostagesFreeGoal = 25;
+
         ///Interface
         gso->interface_hostagesInHelico = updateCounter(NULL, res->font, "Otages dans l'helico : %d/16", ctrl->hostagesInHelico);
         gso->interface_hostagesWaiting = updateCounter(NULL, res->font, "Otages a sauver : %d", gso->hostagesNb);
+        gso->interface_hostagesFree = updateCounter2(NULL, ctrl->res->font, "Otages libres : %d/%d", ctrl->gso->baseHostagesNb, ctrl->minimumHostagesFreeGoal);
     }
 }
 
@@ -170,6 +173,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                     ctrl->gso->baseHostagesPosition[ctrl->gso->baseHostagesNb].x = ctrl->gso->basePosition.x + ctrl->res->hostage->h*(ctrl->gso->baseHostagesNb%(ctrl->gso->base->w/ctrl->res->hostage->h));
                     ctrl->gso->baseHostagesPosition[ctrl->gso->baseHostagesNb].y = ctrl->res->hostage->h*(-((ctrl->gso->baseHostagesNb/(ctrl->gso->base->w/ctrl->res->hostage->h)) + 1));
 
+                    ctrl->gso->interface_hostagesFree = updateCounter2(ctrl->gso->interface_hostagesFree, ctrl->res->font, "Otages libres : %d/%d", ctrl->gso->baseHostagesNb, ctrl->minimumHostagesFreeGoal);
                 }
 
                 ctrl->hostagesInHelico = 0;
@@ -259,6 +263,18 @@ SDL_Surface* updateCounter(SDL_Surface* surface, TTF_Font *font, const char* tex
     SDL_Color color = {0,0,0};
     char count_str[100];
     sprintf(count_str, text, count);
+
+    if(surface)
+        SDL_FreeSurface(surface);
+
+    return TTF_RenderText_Blended(font, count_str, color);
+}
+
+SDL_Surface* updateCounter2(SDL_Surface *surface, TTF_Font *font, const char* text, int count1, int count2)
+{
+    SDL_Color color = {0,0,0};
+    char count_str[100];
+    sprintf(count_str, text, count1, count2);
 
     if(surface)
         SDL_FreeSurface(surface);

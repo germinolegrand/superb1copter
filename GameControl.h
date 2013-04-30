@@ -23,6 +23,8 @@ struct GameControl
     Movement mvt;
 
     unsigned int hostagesInHelico;
+
+    unsigned int minimumHostagesFreeGoal;
 };
 
 void initGame(GameControl *ctrl);
@@ -32,5 +34,6 @@ SDL_Event* processEventsPaused(GameControl *ctrl, SDL_Event *event);
 SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event *event);
 
 SDL_Surface* updateCounter(SDL_Surface *surface, TTF_Font *font, const char* text, int count);
+SDL_Surface* updateCounter2(SDL_Surface *surface, TTF_Font *font, const char* text, int count1, int count2);
 
 #endif // GAMECONTROL_H

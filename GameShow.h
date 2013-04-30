@@ -34,6 +34,7 @@ struct GameShowObjects
     ///Interface
     SDL_Surface *interface_hostagesInHelico;
     SDL_Surface *interface_hostagesWaiting;
+    SDL_Surface *interface_hostagesFree;
 };
 
 void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime);

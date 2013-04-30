@@ -63,4 +63,7 @@ void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime
 
     SDL_Rect interface_hostageWaitingRect = {0,20,0,0};
     SDL_BlitSurface(gso->interface_hostagesWaiting, NULL, ecran, &interface_hostageWaitingRect);
+
+    SDL_Rect interface_hostageFreeRect = {0,40,0,0};
+    SDL_BlitSurface(gso->interface_hostagesFree, NULL, ecran, &interface_hostageFreeRect);
 }
