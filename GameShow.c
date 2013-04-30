@@ -21,4 +21,26 @@ void showGame(SDL_Surface *ecran, GameShowObjects *gso)
     helicoRect.y += gso->backgroundPosition.y;
 
     SDL_BlitSurface(gso->helico, NULL, ecran, &helicoRect);
+
+    for(unsigned int i = 0; i < gso->bombsNb; ++i)
+    {
+        SDL_Rect bbRect = gso->bombsPosition[i];
+        bbRect.x += gso->backgroundPosition.x;
+        bbRect.y += gso->backgroundPosition.y;
+
+        SDL_BlitSurface(gso->bombs[i], NULL, ecran, &bbRect);
+    }
+
+    for(unsigned int i = 0; i < gso->hostagesNb; ++i)
+    {
+        SDL_Rect bhRect = gso->hostagesPosition[i];
+        bhRect.x += gso->backgroundPosition.x;
+        bhRect.y += gso->backgroundPosition.y;
+
+        SDL_Rect bhframeRect = gso->hostages[i]->clip_rect;
+        bhframeRect.w = gso->hostages[i]->h;
+        bhframeRect.x = gso->hostagesFrame*gso->hostages[i]->h;
+
+        SDL_BlitSurface(gso->hostages[i], &bhframeRect, ecran, &bhRect);
+    }
 }

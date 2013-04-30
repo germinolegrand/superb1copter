@@ -14,7 +14,17 @@ struct GameShowObjects
 
     SDL_Surface *buildings[100];
     SDL_Rect buildingsPosition[100];
+    unsigned int buildingHostages[100];
     unsigned int buildingsNb;
+
+    SDL_Surface *bombs[100];
+    SDL_Rect bombsPosition[100];
+    unsigned int bombsNb;
+
+    SDL_Surface *hostages[100];
+    SDL_Rect hostagesPosition[100];
+    unsigned int hostagesFrame;
+    unsigned int hostagesNb;
 
     SDL_Rect backgroundPosition;
 };

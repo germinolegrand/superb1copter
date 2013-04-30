@@ -9,7 +9,10 @@ struct GameResources
     SDL_Surface *helicoL,
                 *helicoR,
                 *base,
-                *building;
+                *building,
+                *buildingD,
+                *bomb,
+                *hostage;
 };
 
 void loadResources(GameResources *res);
