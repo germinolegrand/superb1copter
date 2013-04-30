@@ -31,5 +31,6 @@ void loadLevel(unsigned int level, GameControl *ctrl);
 SDL_Event* processEventsPaused(GameControl *ctrl, SDL_Event *event);
 SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event *event);
 
+SDL_Surface* updateCounter(SDL_Surface *surface, TTF_Font *font, const char* text, int count);
 
 #endif // GAMECONTROL_H

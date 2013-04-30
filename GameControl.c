@@ -48,6 +48,10 @@ void loadLevel(unsigned int level, GameControl *ctrl)
 
         gso->backgroundPosition.x = 400 - gso->basePosition.x - gso->base->w/2;
         gso->backgroundPosition.y = 400;
+
+        ///Interface
+        gso->interface_hostagesInHelico = updateCounter(NULL, res->font, "Otages dans l'helico : %d/16", ctrl->hostagesInHelico);
+        gso->interface_hostagesWaiting = updateCounter(NULL, res->font, "Otages a sauver : %d", gso->hostagesNb);
     }
 }
 
@@ -133,9 +137,14 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
 
     if(currentTime - ctrl->previousTime > 10)
     {
-        ctrl->gso->backgroundPosition.x -= ctrl->mvt.x * 6;
-
         ctrl->gso->helicoPosition.y += ctrl->mvt.y * 5;
+
+        ///Si l'hélico n'est pas au sol
+        if(ctrl->gso->helicoPosition.y + ctrl->gso->helico->h < 0)
+        {
+            ///On autorise le mouvement horizontal
+            ctrl->gso->backgroundPosition.x -= ctrl->mvt.x * 6;
+        }
 
         ///Si on a touché le sol
         if(ctrl->gso->helicoPosition.y + ctrl->gso->helico->h >= 0)
@@ -152,14 +161,16 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                 ///Si l'otage est proche de l'hélico
                 if(ctrl->gso->hostagesPosition[i].x > helicoRealPosition_x - 10 && ctrl->gso->hostagesPosition[i].x < helicoRealPosition_x + 10)
                 {
+                    ///L'otage monte dans l'hélico
                     memmove(ctrl->gso->hostages + i, ctrl->gso->hostages + i + 1, (ctrl->gso->hostagesNb - i - 1)*sizeof(SDL_Surface*));
                     memmove(ctrl->gso->hostagesPosition + i, ctrl->gso->hostagesPosition + i + 1, (ctrl->gso->hostagesNb - i - 1)*sizeof(SDL_Rect));
                     --ctrl->gso->hostagesNb;
                     ++ctrl->hostagesInHelico;
+
+                    ctrl->gso->interface_hostagesInHelico = updateCounter(ctrl->gso->interface_hostagesInHelico, ctrl->res->font, "Otages dans l'helico : %d", ctrl->hostagesInHelico);
+                    ctrl->gso->interface_hostagesWaiting = updateCounter(ctrl->gso->interface_hostagesWaiting, ctrl->res->font, "Otages a sauver : %d", ctrl->gso->hostagesNb);
                 }
             }
-
-            ///activer la montée des otages
         }
         ///Si on sort de l'écran
         else if(ctrl->gso->helicoPosition.y + ctrl->gso->backgroundPosition.y <= 0)
@@ -167,6 +178,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
             ctrl->gso->helicoPosition.y = - ctrl->gso->backgroundPosition.y;
         }
 
+        ///Les bombes tombent
         for(int i = 0; i < ctrl->gso->bombsNb; ++i)
         {
             ctrl->gso->bombsPosition[i].y += 5;
@@ -203,7 +215,11 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
             }
         }
 
-        ctrl->gso->helico = !ctrl->mvt.x ? ctrl->gso->helico : (ctrl->mvt.x > 0 ? ctrl->res->helicoR : ctrl->res->helicoL);
+        if(ctrl->mvt.x)
+        {
+            ///L'hélico est tourné dans le bon sens
+            ctrl->gso->helico = ctrl->mvt.x > 0 ? ctrl->res->helicoR : ctrl->res->helicoL;
+        }
 
         ctrl->gso->hostagesFrame = (currentTime/500)%2;
 
@@ -211,4 +227,17 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
     }
 
     return event;
+}
+
+
+SDL_Surface* updateCounter(SDL_Surface* surface, TTF_Font *font, const char* text, int count)
+{
+    SDL_Color color = {0,0,0};
+    char count_str[100];
+    sprintf(count_str, text, count);
+
+    if(surface)
+        SDL_FreeSurface(surface);
+
+    return TTF_RenderText_Blended(font, count_str, color);
 }

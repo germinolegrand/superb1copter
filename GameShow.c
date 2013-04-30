@@ -43,4 +43,11 @@ void showGame(SDL_Surface *ecran, GameShowObjects *gso)
 
         SDL_BlitSurface(gso->hostages[i], &bhframeRect, ecran, &bhRect);
     }
+
+    ///Interface
+    SDL_Rect interface_hostageInHelicoRect = {0,0,0,0};
+    SDL_BlitSurface(gso->interface_hostagesInHelico, NULL, ecran, &interface_hostageInHelicoRect);
+
+    SDL_Rect interface_hostageWaitingRect = {0,20,0,0};
+    SDL_BlitSurface(gso->interface_hostagesWaiting, NULL, ecran, &interface_hostageWaitingRect);
 }

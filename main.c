@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_ttf.h>
 
 #include "GameResources.h"
 #include "GameShow.h"
@@ -20,6 +21,7 @@ int main(int argc, char* argv[])
     unsigned int pauseBegin = 0;
 
     SDL_Init(SDL_INIT_VIDEO);
+    TTF_Init();
 
     ecran = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
     SDL_WM_SetCaption("Supercopter", NULL);
@@ -74,6 +76,7 @@ int main(int argc, char* argv[])
 
     freeResources(&gResources);
 
+    TTF_Quit();
     SDL_Quit();
 
     return EXIT_SUCCESS;

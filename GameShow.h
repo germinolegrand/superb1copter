@@ -27,6 +27,10 @@ struct GameShowObjects
     unsigned int hostagesNb;
 
     SDL_Rect backgroundPosition;
+
+    ///Interface
+    SDL_Surface *interface_hostagesInHelico;
+    SDL_Surface *interface_hostagesWaiting;
 };
 
 void showGame(SDL_Surface *ecran, GameShowObjects *gso);

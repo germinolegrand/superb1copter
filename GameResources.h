@@ -2,10 +2,13 @@
 #define GAMERESOURCES_H_INCLUDED
 
 #include <SDL/SDL.h>
+#include <SDL/SDL_ttf.h>
 
 typedef struct GameResources GameResources;
 struct GameResources
 {
+    TTF_Font *font;
+
     SDL_Surface *helicoL,
                 *helicoR,
                 *base,

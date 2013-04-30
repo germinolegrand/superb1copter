@@ -38,7 +38,9 @@
 			<Add option="-lmingw32" />
 			<Add option="-lSDLmain" />
 			<Add option="-lSDL" />
+			<Add option="-lSDL_ttf" />
 			<Add directory="SDL/lib" />
+			<Add directory="SDL_ttf/lib/x86" />
 		</Linker>
 		<Unit filename="GameControl.c">
 			<Option compilerVar="CC" />
