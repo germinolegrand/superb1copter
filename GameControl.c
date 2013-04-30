@@ -21,17 +21,17 @@ void loadLevel(unsigned int level, GameControl *ctrl)
         gso->buildings[0] = res->building;
         gso->buildingsPosition[0].x = 0;
         gso->buildingsPosition[0].y = -gso->buildings[0]->h;
-        gso->buildingHostages[0] = 5;
+        gso->buildingHostages[0] = 16;
 
         gso->buildings[1] = res->building;
         gso->buildingsPosition[1].x = 1200;
         gso->buildingsPosition[1].y = -gso->buildings[1]->h;
-        gso->buildingHostages[1] = 5;
+        gso->buildingHostages[1] = 16;
 
         gso->buildings[2] = res->building;
         gso->buildingsPosition[2].x = 900;
         gso->buildingsPosition[2].y = -gso->buildings[2]->h;
-        gso->buildingHostages[2] = 5;
+        gso->buildingHostages[2] = 16;
 
         gso->base = res->base;
         gso->basePosition.x = 500;
@@ -152,6 +152,8 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                 ///Si l'otage est proche de l'hélico
                 if(ctrl->gso->hostagesPosition[i].x > helicoRealPosition_x - 10 && ctrl->gso->hostagesPosition[i].x < helicoRealPosition_x + 10)
                 {
+                    memmove(ctrl->gso->hostages + i, ctrl->gso->hostages + i + 1, (ctrl->gso->hostagesNb - i - 1)*sizeof(SDL_Surface*));
+                    memmove(ctrl->gso->hostagesPosition + i, ctrl->gso->hostagesPosition + i + 1, (ctrl->gso->hostagesNb - i - 1)*sizeof(SDL_Rect));
                     --ctrl->gso->hostagesNb;
                     ++ctrl->hostagesInHelico;
                 }
