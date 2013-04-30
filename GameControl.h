@@ -21,6 +21,8 @@ struct GameControl
     int previousTime;
 
     Movement mvt;
+
+    unsigned int hostagesInHelico;
 };
 
 void initGame(GameControl *ctrl);

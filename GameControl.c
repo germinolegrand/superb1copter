@@ -5,6 +5,7 @@
 void initGame(GameControl* ctrl)
 {
     ctrl->previousTime = SDL_GetTicks();
+    ctrl->hostagesInHelico = 0;
 }
 
 
@@ -141,6 +142,21 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
         {
             ctrl->gso->helicoPosition.y = -ctrl->gso->helico->h;
 
+            int helicoRealPosition_x = -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w/2;
+
+            ///Les otages se rapprochent de l'hélico
+            for(int i = 0; i < ctrl->gso->hostagesNb; ++i)
+            {
+                ctrl->gso->hostagesPosition[i].x += (ctrl->gso->hostagesPosition[i].x < helicoRealPosition_x) ? +1 : -1;
+
+                ///Si l'otage est proche de l'hélico
+                if(ctrl->gso->hostagesPosition[i].x > helicoRealPosition_x - 10 && ctrl->gso->hostagesPosition[i].x < helicoRealPosition_x + 10)
+                {
+                    --ctrl->gso->hostagesNb;
+                    ++ctrl->hostagesInHelico;
+                }
+            }
+
             ///activer la montée des otages
         }
         ///Si on sort de l'écran
@@ -188,11 +204,6 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
         ctrl->gso->helico = !ctrl->mvt.x ? ctrl->gso->helico : (ctrl->mvt.x > 0 ? ctrl->res->helicoR : ctrl->res->helicoL);
 
         ctrl->gso->hostagesFrame = (currentTime/500)%2;
-
-        for(int i = 0; i < ctrl->gso->hostagesNb; ++i)
-        {
-            ctrl->gso->hostagesPosition[i].x += (ctrl->gso->hostagesPosition[i].x < -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w/2) ? +1 : -1;
-        }
 
         ctrl->previousTime = currentTime;
     }
