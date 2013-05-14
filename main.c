@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <LIB/SDL/SDL.h>
-#include <LIB/SDL/SDL_ttf.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_ttf.h>
 
 #include "GameResources.h"
 #include "GameShow.h"
