@@ -78,11 +78,15 @@ int main(int argc, char* argv[])
             {
                 pauseBegin = SDL_GetTicks();
                 paused = 1;
+
+                FMOD_ChannelGroup_SetPaused(canal, 1); // On met la musique en pause
             }
             else if(paused && event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
             {
                 pausedTime += SDL_GetTicks() - pauseBegin;
                 paused = 0;
+
+                FMOD_ChannelGroup_SetPaused(canal, 0); // On relance la musique
             }
             else
             {
