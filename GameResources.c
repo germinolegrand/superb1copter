@@ -4,6 +4,7 @@ void loadResources(GameResources *res)
 {
     res->font = TTF_OpenFont("Ressources/Fonts/arial.ttf", 20);
 
+    res->background = SDL_LoadBMP("Ressources/Images/back.bmp");
     res->helicoL = SDL_LoadBMP("Ressources/Images/copterL.bmp");
     res->helicoR = SDL_LoadBMP("Ressources/Images/copterR.bmp");
     res->base = SDL_LoadBMP("Ressources/Images/Hospital.bmp");
@@ -23,6 +24,7 @@ void loadResources(GameResources *res)
 
 void freeResources(GameResources *res)
 {
+
     SDL_FreeSurface(res->helicoL);
     SDL_FreeSurface(res->helicoR);
     SDL_FreeSurface(res->base);
@@ -30,6 +32,7 @@ void freeResources(GameResources *res)
     SDL_FreeSurface(res->buildingD);
     SDL_FreeSurface(res->bomb);
     SDL_FreeSurface(res->hostage);
+    SDL_FreeSurface(res->background);
 
     TTF_CloseFont(res->font);
 }

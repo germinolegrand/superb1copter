@@ -7,9 +7,42 @@
 #include "GameResources.h"
 #include "GameShow.h"
 #include "GameControl.h"
+#include "Configuration.h"
 
 int main(int argc, char* argv[])
 {
+
+
+//on Recup la conf
+    int resolution[3] = {0};
+    int son = {1};
+    FILE* fichier = NULL;
+
+    fichier = fopen("Config.txt", "r");
+
+    fscanf(fichier, "%d:%d:%d:%d", &resolution[0], &resolution[1], &resolution[2], &son);
+    fclose(fichier);
+
+    if(resolution[0]==0)
+    {
+        FILE *file;
+        file = fopen("Config.txt","w"); /* Ecris ou creer le fichier si il n'existe pas */
+        fprintf(file,"%s","800:600:32:1");  // Config par defaut
+        fclose(file);
+
+    FILE* fichier = NULL;
+
+    fichier = fopen("Config.txt", "r");
+
+    fscanf(fichier, "%d:%d:%d:%d", &resolution[0], &resolution[1], &resolution[2], &son);
+    fclose(fichier);
+    }
+
+
+// on recup la conf
+
+
+
     int running = 1;
     int paused = 0;
     SDL_Surface *ecran = NULL;
@@ -24,13 +57,19 @@ int main(int argc, char* argv[])
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
 
-    ecran = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-    SDL_WM_SetCaption("Supercopter", NULL);
-    SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 17, 206, 112));
+    ecran = SDL_SetVideoMode(resolution[0], resolution[1], resolution[2], SDL_HWSURFACE | SDL_DOUBLEBUF); // On recupere la resolution et le nombre de couleurs dans le fichier de conf
+    SDL_WM_SetCaption("Supercopter", NULL); // On recupere la variable name dans le fichier de config
+
+
+
+
+    //SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 17, 206, 112));
 
     loadResources(&gResources);
     initGame(&gControl);
     loadLevel(1, &gControl);
+
+
 
 	//Intialisation de Fmod
 	FMOD_SYSTEM *system;
@@ -40,13 +79,15 @@ int main(int argc, char* argv[])
 	FMOD_System_Create(&system);
     FMOD_System_Init(system, 1, FMOD_INIT_NORMAL, NULL);
 
+        if(son==1) // Si le son est activé
+    {
 	/* On ouvre la musique */
     resultat = FMOD_System_CreateSound(system, "Ressources/Son/tro.xm", FMOD_SOFTWARE | FMOD_2D | FMOD_CREATESTREAM, 0, &musique);
 
     /* On vérifie si elle a bien été ouverte (IMPORTANT) */
     if (resultat != FMOD_OK)
     {
-        fprintf(stderr, "Impossible de lire le fichier mp3\n");
+        fprintf(stderr, "Impossible de lire le fichier xm\n");
         return 3;
     }
 
@@ -55,7 +96,7 @@ int main(int argc, char* argv[])
 
 	/* On joue la musique */
     FMOD_System_PlaySound(system, FMOD_CHANNEL_FREE, musique, 0, NULL);
-
+    }
 	FMOD_CHANNELGROUP *canal;
 	FMOD_BOOL etat;
 	FMOD_System_GetMasterChannelGroup(system, &canal);
@@ -79,14 +120,19 @@ int main(int argc, char* argv[])
                 pauseBegin = SDL_GetTicks();
                 paused = 1;
 
-                FMOD_ChannelGroup_SetPaused(canal, 1); // On met la musique en pause
+                  if(son==1)// Si le son est activé
+                        {  FMOD_ChannelGroup_SetPaused(canal, 1); // On met la musique en pause
+                        }
             }
             else if(paused && event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
             {
                 pausedTime += SDL_GetTicks() - pauseBegin;
                 paused = 0;
 
-                FMOD_ChannelGroup_SetPaused(canal, 0); // On relance la musique
+                if(son==1)// Si le son est activé
+                {  FMOD_ChannelGroup_SetPaused(canal, 0); // On relance la musique
+                }
+
             }
             else
             {
@@ -103,8 +149,20 @@ int main(int argc, char* argv[])
             processEvents(&gControl, SDL_GetTicks() - pausedTime, eventptr);
         }
 
-        SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 17, 206, 112));
+        SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
+             SDL_Surface* bmp = SDL_LoadBMP("Ressources/Images/back.bmp");
+    if (!bmp)
+    {
+        printf("Unable to load bitmap: %s\n", SDL_GetError());
+        return 1;
+    }
 
+    // centre the bitmap on screen
+    SDL_Rect dstrect;
+
+    dstrect.y = (ecran->h - bmp->h) / 2;
+
+    SDL_BlitSurface(bmp, 0, ecran, &dstrect);
         showGame(ecran, &gShowObjects, SDL_GetTicks());
 
         SDL_Flip(ecran);
@@ -112,8 +170,17 @@ int main(int argc, char* argv[])
 
     freeResources(&gResources);
 
+    FMOD_System_Close(system);
+    FMOD_System_Release(system);
     TTF_Quit();
     SDL_Quit();
+
+
+            // on save la conf
+        FILE *file;
+        file = fopen("Config.txt","w"); /* Ecris ou creer le fichier si il n'existe pas */
+        fprintf(file,"%d:%d:%d:%d", resolution[0], resolution[1], resolution[2], son); // On enregistre notre fichier de conf
+        fclose(file);
 
     return EXIT_SUCCESS;
 }
