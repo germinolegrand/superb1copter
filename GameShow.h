@@ -1,7 +1,7 @@
 #ifndef GAMESHOW_H
 #define GAMESHOW_H
 
-#include <SDL/SDL.h>
+#include <LIB/SDL/SDL.h>
 
 typedef struct GameShowObjects GameShowObjects;
 struct GameShowObjects

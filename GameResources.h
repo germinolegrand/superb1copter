@@ -1,8 +1,8 @@
 #ifndef GAMERESOURCES_H_INCLUDED
 #define GAMERESOURCES_H_INCLUDED
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
+#include <LIB/SDL/SDL.h>
+#include <LIB/SDL/SDL_ttf.h>
 
 typedef struct GameResources GameResources;
 struct GameResources

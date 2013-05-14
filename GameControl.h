@@ -1,7 +1,7 @@
 #ifndef GAMECONTROL_H
 #define GAMECONTROL_H
 
-#include <SDL/SDL.h>
+#include <LIB/SDL/SDL.h>
 
 #include "GameResources.h"
 #include "GameShow.h"
