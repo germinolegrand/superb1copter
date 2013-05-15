@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
-#include "fmod.h"
+#include <fmod.h>
 
 #include "GameResources.h"
 #include "GameShow.h"
@@ -23,19 +23,19 @@ int main(int argc, char* argv[])
     fscanf(fichier, "%d:%d:%d:%d", &resolution[0], &resolution[1], &resolution[2], &son);
     fclose(fichier);
 
-    if(resolution[0]==0)
+    if(resolution[0] == 0)
     {
-        FILE *file;
-        file = fopen("Config.txt","w"); /* Ecris ou creer le fichier si il n'existe pas */
-        fprintf(file,"%s","800:600:32:1");  // Config par defaut
+        FILE* file;
+        file = fopen("Config.txt", "w"); /* Ecris ou creer le fichier si il n'existe pas */
+        fprintf(file, "%s", "800:600:32:1"); // Config par defaut
         fclose(file);
 
-    FILE* fichier = NULL;
+        FILE* fichier = NULL;
 
-    fichier = fopen("Config.txt", "r");
+        fichier = fopen("Config.txt", "r");
 
-    fscanf(fichier, "%d:%d:%d:%d", &resolution[0], &resolution[1], &resolution[2], &son);
-    fclose(fichier);
+        fscanf(fichier, "%d:%d:%d:%d", &resolution[0], &resolution[1], &resolution[2], &son);
+        fclose(fichier);
     }
 
 
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 
     int running = 1;
     int paused = 0;
-    SDL_Surface *ecran = NULL;
+    SDL_Surface* ecran = NULL;
 
     GameResources gResources;
     GameShowObjects gShowObjects;
@@ -71,43 +71,43 @@ int main(int argc, char* argv[])
 
 
 
-	//Intialisation de Fmod
-	FMOD_SYSTEM *system;
-    FMOD_SOUND *musique;
+    //Intialisation de Fmod
+    FMOD_SYSTEM* system;
+    FMOD_SOUND* musique;
     FMOD_RESULT resultat;
 
-	FMOD_System_Create(&system);
+    FMOD_System_Create(&system);
     FMOD_System_Init(system, 1, FMOD_INIT_NORMAL, NULL);
 
-        if(son==1) // Si le son est activé
+    if(son == 1) // Si le son est activé
     {
-	/* On ouvre la musique */
-    resultat = FMOD_System_CreateSound(system, "Ressources/Son/tro.xm", FMOD_SOFTWARE | FMOD_2D | FMOD_CREATESTREAM, 0, &musique);
+        /* On ouvre la musique */
+        resultat = FMOD_System_CreateSound(system, "Ressources/Son/tro.xm", FMOD_SOFTWARE | FMOD_2D | FMOD_CREATESTREAM, 0, &musique);
 
-    /* On vérifie si elle a bien été ouverte (IMPORTANT) */
-    if (resultat != FMOD_OK)
-    {
-        fprintf(stderr, "Impossible de lire le fichier xm\n");
-        return 3;
+        /* On vérifie si elle a bien été ouverte (IMPORTANT) */
+        if(resultat != FMOD_OK)
+        {
+            fprintf(stderr, "Impossible de lire le fichier xm\n");
+            return 3;
+        }
+
+        /* On active la répétition de la musique à l'infini */
+        FMOD_Sound_SetLoopCount(musique, -1);
+
+        /* On joue la musique */
+        FMOD_System_PlaySound(system, FMOD_CHANNEL_FREE, musique, 0, NULL);
     }
-
-    /* On active la répétition de la musique à l'infini */
-    FMOD_Sound_SetLoopCount(musique, -1);
-
-	/* On joue la musique */
-    FMOD_System_PlaySound(system, FMOD_CHANNEL_FREE, musique, 0, NULL);
-    }
-	FMOD_CHANNELGROUP *canal;
-	FMOD_BOOL etat;
-	FMOD_System_GetMasterChannelGroup(system, &canal);
-	FMOD_ChannelGroup_GetPaused(canal, &etat);
+    FMOD_CHANNELGROUP* canal;
+    FMOD_BOOL etat;
+    FMOD_System_GetMasterChannelGroup(system, &canal);
+    FMOD_ChannelGroup_GetPaused(canal, &etat);
 
 
 
     while(running)
     {
         SDL_Event event;
-        SDL_Event *eventptr = NULL;
+        SDL_Event* eventptr = NULL;
 
         if(SDL_PollEvent(&event))
         {
@@ -120,17 +120,19 @@ int main(int argc, char* argv[])
                 pauseBegin = SDL_GetTicks();
                 paused = 1;
 
-                  if(son==1)// Si le son est activé
-                        {  FMOD_ChannelGroup_SetPaused(canal, 1); // On met la musique en pause
-                        }
+                if(son == 1) // Si le son est activé
+                {
+                    FMOD_ChannelGroup_SetPaused(canal, 1); // On met la musique en pause
+                }
             }
             else if(paused && event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
             {
                 pausedTime += SDL_GetTicks() - pauseBegin;
                 paused = 0;
 
-                if(son==1)// Si le son est activé
-                {  FMOD_ChannelGroup_SetPaused(canal, 0); // On relance la musique
+                if(son == 1) // Si le son est activé
+                {
+                    FMOD_ChannelGroup_SetPaused(canal, 0); // On relance la musique
                 }
 
             }
@@ -150,19 +152,19 @@ int main(int argc, char* argv[])
         }
 
         SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
-             SDL_Surface* bmp = SDL_LoadBMP("Ressources/Images/back.bmp");
-    if (!bmp)
-    {
-        printf("Unable to load bitmap: %s\n", SDL_GetError());
-        return 1;
-    }
+        SDL_Surface* bmp = SDL_LoadBMP("Ressources/Images/back.bmp");
+        if(!bmp)
+        {
+            printf("Unable to load bitmap: %s\n", SDL_GetError());
+            return 1;
+        }
 
-    // centre the bitmap on screen
-    SDL_Rect dstrect;
+        // centre the bitmap on screen
+        SDL_Rect dstrect;
 
-    dstrect.y = (ecran->h - bmp->h) / 2;
+        dstrect.y = (ecran->h - bmp->h) / 2;
 
-    SDL_BlitSurface(bmp, 0, ecran, &dstrect);
+        SDL_BlitSurface(bmp, 0, ecran, &dstrect);
         showGame(ecran, &gShowObjects, SDL_GetTicks());
 
         SDL_Flip(ecran);
@@ -176,11 +178,11 @@ int main(int argc, char* argv[])
     SDL_Quit();
 
 
-            // on save la conf
-        FILE *file;
-        file = fopen("Config.txt","w"); /* Ecris ou creer le fichier si il n'existe pas */
-        fprintf(file,"%d:%d:%d:%d", resolution[0], resolution[1], resolution[2], son); // On enregistre notre fichier de conf
-        fclose(file);
+    // on save la conf
+    FILE* file;
+    file = fopen("Config.txt", "w"); /* Ecris ou creer le fichier si il n'existe pas */
+    fprintf(file, "%d:%d:%d:%d", resolution[0], resolution[1], resolution[2], son); // On enregistre notre fichier de conf
+    fclose(file);
 
     return EXIT_SUCCESS;
 }
