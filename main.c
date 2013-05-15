@@ -151,20 +151,8 @@ int main(int argc, char* argv[])
             processEvents(&gControl, SDL_GetTicks() - pausedTime, eventptr);
         }
 
-        SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
-        SDL_Surface* bmp = SDL_LoadBMP("Ressources/Images/back.bmp");
-        if(!bmp)
-        {
-            printf("Unable to load bitmap: %s\n", SDL_GetError());
-            return 1;
-        }
+        SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 0, 0));
 
-        // centre the bitmap on screen
-        SDL_Rect dstrect;
-
-        dstrect.y = (ecran->h - bmp->h) / 2;
-
-        SDL_BlitSurface(bmp, 0, ecran, &dstrect);
         showGame(ecran, &gShowObjects, SDL_GetTicks());
 
         SDL_Flip(ecran);
