@@ -6,6 +6,7 @@ obj/*
 *.depend
 *.layout
 *.cbTemp
+Config.txt
 
 # Libraries
 #*.lib

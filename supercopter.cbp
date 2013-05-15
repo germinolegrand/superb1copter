@@ -31,17 +31,24 @@
 		<Compiler>
 			<Add option="-pedantic" />
 			<Add option="-Wall" />
-			<Add option="-std=c11" />
-			<Add directory="SDL/include" />
+			<Add option="-std=gnu99" />
+			<Add directory="LIB/SDL/include" />
+			<Add directory="LIB/fmod/inc" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32" />
 			<Add option="-lSDLmain" />
 			<Add option="-lSDL" />
 			<Add option="-lSDL_ttf" />
-			<Add directory="SDL/lib" />
-			<Add directory="SDL_ttf/lib/x86" />
+			<Add library="LIB\fmod\lib\libfmodex.a" />
+			<Add directory="LIB/SDL/lib" />
+			<Add directory="LIB/SDL_ttf/lib/x86" />
+			<Add directory="LIB/fmod/lib" />
 		</Linker>
+		<Unit filename="Configuration.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Configuration.h" />
 		<Unit filename="GameControl.c">
 			<Option compilerVar="CC" />
 		</Unit>
