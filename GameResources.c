@@ -13,13 +13,13 @@ void loadResources(GameResources *res)
     res->bomb = SDL_LoadBMP("Ressources/Images/bomb.bmp");
     res->hostage = SDL_LoadBMP("Ressources/Images/hostagee.bmp");
 
-    SDL_SetColorKey(res->helicoL, SDL_SRCCOLORKEY, SDL_MapRGB(res->helicoL->format, 0, 0, 0));
-    SDL_SetColorKey(res->helicoR, SDL_SRCCOLORKEY, SDL_MapRGB(res->helicoR->format, 0, 0, 0));
-    SDL_SetColorKey(res->base, SDL_SRCCOLORKEY, SDL_MapRGB(res->base->format, 0, 0, 0));
-    SDL_SetColorKey(res->building, SDL_SRCCOLORKEY, SDL_MapRGB(res->building->format, 0, 0, 0));
-    SDL_SetColorKey(res->buildingD, SDL_SRCCOLORKEY, SDL_MapRGB(res->buildingD->format, 0, 0, 0));
-    SDL_SetColorKey(res->bomb, SDL_SRCCOLORKEY, SDL_MapRGB(res->bomb->format, 0, 0, 0));
-    SDL_SetColorKey(res->hostage, SDL_SRCCOLORKEY, SDL_MapRGB(res->hostage->format, 0, 0, 0));
+    SDL_SetColorKey(res->helicoL, SDL_SRCCOLORKEY, SDL_MapRGB(res->helicoL->format, 255, 0, 255));
+    SDL_SetColorKey(res->helicoR, SDL_SRCCOLORKEY, SDL_MapRGB(res->helicoR->format, 255, 0, 255));
+    SDL_SetColorKey(res->base, SDL_SRCCOLORKEY, SDL_MapRGB(res->base->format, 255, 0, 255));
+    SDL_SetColorKey(res->building, SDL_SRCCOLORKEY, SDL_MapRGB(res->building->format, 255, 0, 255));
+    SDL_SetColorKey(res->buildingD, SDL_SRCCOLORKEY, SDL_MapRGB(res->buildingD->format, 255, 0, 255));
+    SDL_SetColorKey(res->bomb, SDL_SRCCOLORKEY, SDL_MapRGB(res->bomb->format, 255, 0, 255));
+    SDL_SetColorKey(res->hostage, SDL_SRCCOLORKEY, SDL_MapRGB(res->hostage->format, 255, 0, 255));
 }
 
 void freeResources(GameResources *res)

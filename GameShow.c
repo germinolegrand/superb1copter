@@ -2,6 +2,7 @@
 
 void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime)
 {
+    ///bâtiments
     for(unsigned int i = 0; i < gso->buildingsNb; ++i)
     {
         SDL_Rect bgRect = gso->buildingsPosition[i];
@@ -11,17 +12,24 @@ void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime
         SDL_BlitSurface(gso->buildings[i], NULL, ecran, &bgRect);
     }
 
-    SDL_Rect baseRect = gso->basePosition;
-    baseRect.x += gso->backgroundPosition.x;
-    baseRect.y += gso->backgroundPosition.y;
+    ///base
+    {
+        SDL_Rect baseRect = gso->basePosition;
+        baseRect.x += gso->backgroundPosition.x;
+        baseRect.y += gso->backgroundPosition.y;
 
-    SDL_BlitSurface(gso->base, NULL, ecran, &baseRect);
+        SDL_BlitSurface(gso->base, NULL, ecran, &baseRect);
+    }
 
-    SDL_Rect helicoRect = gso->helicoPosition;
-    helicoRect.y += gso->backgroundPosition.y;
+    ///hélicoptère
+    {
+        SDL_Rect helicoRect = gso->helicoPosition;
+        helicoRect.y += gso->backgroundPosition.y;
 
-    SDL_BlitSurface(gso->helico, NULL, ecran, &helicoRect);
+        SDL_BlitSurface(gso->helico, NULL, ecran, &helicoRect);
+    }
 
+    ///bombes
     for(unsigned int i = 0; i < gso->bombsNb; ++i)
     {
         SDL_Rect bbRect = gso->bombsPosition[i];
@@ -31,6 +39,7 @@ void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime
         SDL_BlitSurface(gso->bombs[i], NULL, ecran, &bbRect);
     }
 
+    ///otages
     for(unsigned int i = 0; i < gso->hostagesNb; ++i)
     {
         SDL_Rect bhRect = gso->hostagesPosition[i];
@@ -44,6 +53,7 @@ void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime
         SDL_BlitSurface(gso->hostages[i], &bhframeRect, ecran, &bhRect);
     }
 
+    ///otages dans la base
     for(unsigned int i = 0; i < gso->baseHostagesNb; ++i)
     {
         SDL_Rect bhRect = gso->baseHostagesPosition[i];
@@ -58,12 +68,14 @@ void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime
     }
 
     ///Interface
-    SDL_Rect interface_hostageInHelicoRect = {0,0,0,0};
-    SDL_BlitSurface(gso->interface_hostagesInHelico, NULL, ecran, &interface_hostageInHelicoRect);
+    {
+        SDL_Rect interface_hostageInHelicoRect = {0,0,0,0};
+        SDL_BlitSurface(gso->interface_hostagesInHelico, NULL, ecran, &interface_hostageInHelicoRect);
 
-    SDL_Rect interface_hostageWaitingRect = {0,20,0,0};
-    SDL_BlitSurface(gso->interface_hostagesWaiting, NULL, ecran, &interface_hostageWaitingRect);
+        SDL_Rect interface_hostageWaitingRect = {0,20,0,0};
+        SDL_BlitSurface(gso->interface_hostagesWaiting, NULL, ecran, &interface_hostageWaitingRect);
 
-    SDL_Rect interface_hostageFreeRect = {0,40,0,0};
-    SDL_BlitSurface(gso->interface_hostagesFree, NULL, ecran, &interface_hostageFreeRect);
+        SDL_Rect interface_hostageFreeRect = {0,40,0,0};
+        SDL_BlitSurface(gso->interface_hostagesFree, NULL, ecran, &interface_hostageFreeRect);
+    }
 }
