@@ -2,15 +2,16 @@
 
 void loadResources(GameResources *res)
 {
-    res->font = TTF_OpenFont("arial.ttf", 20);
+    res->font = TTF_OpenFont("Ressources/Fonts/arial.ttf", 20);
 
-    res->helicoL = SDL_LoadBMP("helicopterL.bmp");
-    res->helicoR = SDL_LoadBMP("helicopterR.bmp");
-    res->base = SDL_LoadBMP("base.bmp");
-    res->building = SDL_LoadBMP("building.bmp");
-    res->buildingD = SDL_LoadBMP("buildingD.bmp");
-    res->bomb = SDL_LoadBMP("bomb.bmp");
-    res->hostage = SDL_LoadBMP("hostage.bmp");
+    res->background = SDL_LoadBMP("Ressources/Images/back.bmp");
+    res->helicoL = SDL_LoadBMP("Ressources/Images/copterL.bmp");
+    res->helicoR = SDL_LoadBMP("Ressources/Images/copterR.bmp");
+    res->base = SDL_LoadBMP("Ressources/Images/Hospital.bmp");
+    res->building = SDL_LoadBMP("Ressources/Images/buld.bmp");
+    res->buildingD = SDL_LoadBMP("Ressources/Images/buldD.bmp");
+    res->bomb = SDL_LoadBMP("Ressources/Images/bomb.bmp");
+    res->hostage = SDL_LoadBMP("Ressources/Images/hostagee.bmp");
 
     SDL_SetColorKey(res->helicoL, SDL_SRCCOLORKEY, SDL_MapRGB(res->helicoL->format, 255, 0, 255));
     SDL_SetColorKey(res->helicoR, SDL_SRCCOLORKEY, SDL_MapRGB(res->helicoR->format, 255, 0, 255));
@@ -23,6 +24,7 @@ void loadResources(GameResources *res)
 
 void freeResources(GameResources *res)
 {
+
     SDL_FreeSurface(res->helicoL);
     SDL_FreeSurface(res->helicoR);
     SDL_FreeSurface(res->base);
@@ -30,6 +32,7 @@ void freeResources(GameResources *res)
     SDL_FreeSurface(res->buildingD);
     SDL_FreeSurface(res->bomb);
     SDL_FreeSurface(res->hostage);
+    SDL_FreeSurface(res->background);
 
     TTF_CloseFont(res->font);
 }
