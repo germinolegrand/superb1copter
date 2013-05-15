@@ -15,7 +15,8 @@ struct GameResources
                 *building,
                 *buildingD,
                 *bomb,
-                *hostage;
+                *hostage,
+                *background;
 };
 
 void loadResources(GameResources *res);

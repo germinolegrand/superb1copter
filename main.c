@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
+#include <fmod.h>
 
 #include "GameResources.h"
 #include "GameShow.h"
@@ -11,7 +12,7 @@ int main(int argc, char* argv[])
 {
     int running = 1;
     int paused = 0;
-    SDL_Surface *ecran = NULL;
+    SDL_Surface* ecran = NULL;
 
     GameResources gResources;
     GameShowObjects gShowObjects;
@@ -25,16 +26,17 @@ int main(int argc, char* argv[])
 
     ecran = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
     SDL_WM_SetCaption("Supercopter", NULL);
-    SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 17, 206, 112));
+
 
     loadResources(&gResources);
     initGame(&gControl);
     loadLevel(1, &gControl);
 
+
     while(running)
     {
         SDL_Event event;
-        SDL_Event *eventptr = NULL;
+        SDL_Event* eventptr = NULL;
 
         if(SDL_PollEvent(&event))
         {
@@ -67,7 +69,7 @@ int main(int argc, char* argv[])
             processEvents(&gControl, SDL_GetTicks() - pausedTime, eventptr);
         }
 
-        SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 17, 206, 112));
+        SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 0, 0));
 
         showGame(ecran, &gShowObjects, SDL_GetTicks());
 
