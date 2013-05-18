@@ -58,8 +58,7 @@ void loadLevel(unsigned int level, GameControl *ctrl)
         gso->interface_hostagesFree = updateCounter2(NULL, res->font, "Otages libres : %d/%d", gso->baseHostagesNb, ctrl->minimumHostagesFreeGoal);
 
         ///Audio
-        FMOD_System_PlaySound(res->fmodSystem, FMOD_CHANNEL_FREE, res->bgMusic1, 0, NULL);
-        FMOD_Sound_SetLoopCount(res->bgMusic1, -1);
+        audioPlayBackgroundMusic(res->audio, res->bgMusic1);
     }
 }
 

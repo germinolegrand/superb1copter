@@ -2,13 +2,12 @@
 #include <stdio.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
-#include <fmod.h>
 
+#include "Audio.h"
 #include "GameResources.h"
 #include "GameShow.h"
 #include "GameControl.h"
 
-void audioPause(FMOD_SYSTEM *system, int paused);
 
 int main(int argc, char* argv[])
 {
@@ -25,14 +24,13 @@ int main(int argc, char* argv[])
     ecran = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
     SDL_WM_SetCaption("Supercopter", NULL);
 
-    FMOD_SYSTEM *fmodSystem = NULL;
+    Audio audio;
 
-    FMOD_System_Create(&fmodSystem);
-    FMOD_System_Init(fmodSystem, 32, FMOD_INIT_NORMAL, NULL);
+    audioInit(&audio);
 
 
     GameResources gResources;
-    gResources.fmodSystem = fmodSystem;
+    gResources.audio = &audio;
 
     loadResources(&gResources);
 
@@ -65,14 +63,14 @@ int main(int argc, char* argv[])
                 pauseBegin = SDL_GetTicks();
                 paused = 1;
 
-                audioPause(fmodSystem, paused);
+                audioPause(&audio, paused);
             }
             else if(paused && event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
             {
                 pausedTime += SDL_GetTicks() - pauseBegin;
                 paused = 0;
 
-                audioPause(fmodSystem, paused);
+                audioPause(&audio, paused);
             }
             else
             {
@@ -98,20 +96,12 @@ int main(int argc, char* argv[])
 
     freeResources(&gResources);
 
-    FMOD_System_Close(fmodSystem);
-    FMOD_System_Release(fmodSystem);
+    audioQuit(&audio);
 
     TTF_Quit();
     SDL_Quit();
 
     return EXIT_SUCCESS;
-}
-
-void audioPause(FMOD_SYSTEM* system, int paused)
-{
-    FMOD_CHANNELGROUP *channel = NULL;
-    FMOD_System_GetMasterChannelGroup(system, &channel);
-    FMOD_ChannelGroup_SetPaused(channel, paused);
 }
 
 

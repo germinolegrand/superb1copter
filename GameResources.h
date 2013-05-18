@@ -3,12 +3,13 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
-#include <fmod.h>
+
+#include "Audio.h"
 
 typedef struct GameResources GameResources;
 struct GameResources
 {
-    FMOD_SYSTEM *fmodSystem;
+    Audio *audio;
 
     FMOD_SOUND *bgMusic1;
 

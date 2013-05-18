@@ -2,7 +2,7 @@
 
 void loadResources(GameResources *res)
 {
-    FMOD_System_CreateSound(res->fmodSystem, "Ressources/Son/tro.xm", FMOD_SOFTWARE | FMOD_2D | FMOD_CREATESTREAM, 0, &res->bgMusic1);
+    res->bgMusic1 = audioLoadMusic(res->audio, "Ressources/Son/tro.xm");
 
     res->font = TTF_OpenFont("Ressources/Fonts/arial.ttf", 20);
 
@@ -38,5 +38,5 @@ void freeResources(GameResources *res)
 
     TTF_CloseFont(res->font);
 
-    FMOD_Sound_Release(res->bgMusic1);
+    audioFreeMusic(res->audio, res->bgMusic1);
 }
