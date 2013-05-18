@@ -14,10 +14,6 @@ int main(int argc, char* argv[])
     int paused = 0;
     SDL_Surface* ecran = NULL;
 
-    GameResources gResources;
-    GameShowObjects gShowObjects;
-    GameControl gControl = {&gResources, &gShowObjects};
-
     unsigned int pausedTime = 0;
     unsigned int pauseBegin = 0;
 
@@ -27,9 +23,27 @@ int main(int argc, char* argv[])
     ecran = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
     SDL_WM_SetCaption("Supercopter", NULL);
 
+    FMOD_SYSTEM *fmodSystem = NULL;
+
+    FMOD_System_Create(&fmodSystem);
+    FMOD_System_Init(fmodSystem, 32, FMOD_INIT_NORMAL, NULL);
+
+
+    GameResources gResources;
+    gResources.fmodSystem = fmodSystem;
 
     loadResources(&gResources);
+
+
+    GameShowObjects gShowObjects;
+
+    GameControl gControl;
+    gControl.res = &gResources;
+    gControl.gso = &gShowObjects;
+
     initGame(&gControl);
+
+
     loadLevel(1, &gControl);
 
 
@@ -77,6 +91,9 @@ int main(int argc, char* argv[])
     }
 
     freeResources(&gResources);
+
+    FMOD_System_Close(fmodSystem);
+    FMOD_System_Release(fmodSystem);
 
     TTF_Quit();
     SDL_Quit();

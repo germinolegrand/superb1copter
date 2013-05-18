@@ -3,10 +3,15 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
+#include <fmod.h>
 
 typedef struct GameResources GameResources;
 struct GameResources
 {
+    FMOD_SYSTEM *fmodSystem;
+
+    FMOD_SOUND *bgMusic1;
+
     TTF_Font *font;
 
     SDL_Surface *helicoL,
