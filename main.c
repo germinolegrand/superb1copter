@@ -2,21 +2,18 @@
 #include <stdio.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
-#include <fmod.h>
 
+#include "Audio.h"
 #include "GameResources.h"
 #include "GameShow.h"
 #include "GameControl.h"
+
 
 int main(int argc, char* argv[])
 {
     int running = 1;
     int paused = 0;
     SDL_Surface* ecran = NULL;
-
-    GameResources gResources;
-    GameShowObjects gShowObjects;
-    GameControl gControl = {&gResources, &gShowObjects};
 
     unsigned int pausedTime = 0;
     unsigned int pauseBegin = 0;
@@ -27,9 +24,26 @@ int main(int argc, char* argv[])
     ecran = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
     SDL_WM_SetCaption("Supercopter", NULL);
 
+    Audio audio;
+
+    audioInit(&audio);
+
+
+    GameResources gResources;
+    gResources.audio = &audio;
 
     loadResources(&gResources);
+
+
+    GameShowObjects gShowObjects;
+
+    GameControl gControl;
+    gControl.res = &gResources;
+    gControl.gso = &gShowObjects;
+
     initGame(&gControl);
+
+
     loadLevel(1, &gControl);
 
 
@@ -48,11 +62,15 @@ int main(int argc, char* argv[])
             {
                 pauseBegin = SDL_GetTicks();
                 paused = 1;
+
+                audioPause(&audio, paused);
             }
             else if(paused && event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
             {
                 pausedTime += SDL_GetTicks() - pauseBegin;
                 paused = 0;
+
+                audioPause(&audio, paused);
             }
             else
             {
@@ -78,9 +96,12 @@ int main(int argc, char* argv[])
 
     freeResources(&gResources);
 
+    audioQuit(&audio);
+
     TTF_Quit();
     SDL_Quit();
 
     return EXIT_SUCCESS;
 }
+
 
