@@ -45,6 +45,10 @@
 			<Add directory="LIB/SDL_ttf/lib/x86" />
 			<Add directory="LIB/fmod/lib" />
 		</Linker>
+		<Unit filename="Audio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Audio.h" />
 		<Unit filename="GameControl.c">
 			<Option compilerVar="CC" />
 		</Unit>
