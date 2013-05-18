@@ -59,6 +59,7 @@ void loadLevel(unsigned int level, GameControl *ctrl)
 
         ///Audio
         FMOD_System_PlaySound(res->fmodSystem, FMOD_CHANNEL_FREE, res->bgMusic1, 0, NULL);
+        FMOD_Sound_SetLoopCount(res->bgMusic1, -1);
     }
 }
 

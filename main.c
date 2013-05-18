@@ -62,11 +62,19 @@ int main(int argc, char* argv[])
             {
                 pauseBegin = SDL_GetTicks();
                 paused = 1;
+
+                FMOD_CHANNELGROUP *channel = NULL;
+                FMOD_System_GetMasterChannelGroup(fmodSystem, &channel);
+                FMOD_ChannelGroup_SetPaused(channel, 1); // On met la musique en pause
             }
             else if(paused && event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
             {
                 pausedTime += SDL_GetTicks() - pauseBegin;
                 paused = 0;
+
+                FMOD_CHANNELGROUP *channel = NULL;
+                FMOD_System_GetMasterChannelGroup(fmodSystem, &channel);
+                FMOD_ChannelGroup_SetPaused(channel, 0); // On relance la musique
             }
             else
             {
