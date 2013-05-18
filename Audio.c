@@ -10,6 +10,8 @@ void audioInit(Audio* aud)
 
     aud->backgroundMusic = NULL;
     aud->backgroundMusicChannel = NULL;
+
+    audioSetGlobalVolume(aud, aud->conf->audioVolume);
 }
 
 void audioQuit(Audio* aud)
@@ -24,6 +26,25 @@ void audioPause(Audio *aud, int paused)
     FMOD_CHANNELGROUP *channelMaster = NULL;
     FMOD_System_GetMasterChannelGroup(aud->system, &channelMaster);
     FMOD_ChannelGroup_SetPaused(channelMaster, paused);
+}
+
+void audioSetGlobalVolume(Audio* aud, float volume)
+{
+    FMOD_CHANNELGROUP *channelMaster = NULL;
+    FMOD_System_GetMasterChannelGroup(aud->system, &channelMaster);
+    FMOD_ChannelGroup_SetVolume(channelMaster, volume);
+
+    aud->conf->audioVolume = volume;
+}
+
+void audioChangeGlobalVolume(Audio *aud, float volumeAdded)
+{
+    FMOD_CHANNELGROUP *channelMaster = NULL;
+    FMOD_System_GetMasterChannelGroup(aud->system, &channelMaster);
+
+    float volume = 0.f;
+    FMOD_ChannelGroup_GetVolume(channelMaster, &volume);
+    audioSetGlobalVolume(aud, volume + volumeAdded);
 }
 
 
