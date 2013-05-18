@@ -8,6 +8,8 @@
 #include "GameShow.h"
 #include "GameControl.h"
 
+void audioPause(FMOD_SYSTEM *system, int paused);
+
 int main(int argc, char* argv[])
 {
     int running = 1;
@@ -63,18 +65,14 @@ int main(int argc, char* argv[])
                 pauseBegin = SDL_GetTicks();
                 paused = 1;
 
-                FMOD_CHANNELGROUP *channel = NULL;
-                FMOD_System_GetMasterChannelGroup(fmodSystem, &channel);
-                FMOD_ChannelGroup_SetPaused(channel, 1); // On met la musique en pause
+                audioPause(fmodSystem, paused);
             }
             else if(paused && event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
             {
                 pausedTime += SDL_GetTicks() - pauseBegin;
                 paused = 0;
 
-                FMOD_CHANNELGROUP *channel = NULL;
-                FMOD_System_GetMasterChannelGroup(fmodSystem, &channel);
-                FMOD_ChannelGroup_SetPaused(channel, 0); // On relance la musique
+                audioPause(fmodSystem, paused);
             }
             else
             {
@@ -108,4 +106,12 @@ int main(int argc, char* argv[])
 
     return EXIT_SUCCESS;
 }
+
+void audioPause(FMOD_SYSTEM* system, int paused)
+{
+    FMOD_CHANNELGROUP *channel = NULL;
+    FMOD_System_GetMasterChannelGroup(system, &channel);
+    FMOD_ChannelGroup_SetPaused(channel, paused);
+}
+
 
