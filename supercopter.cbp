@@ -49,6 +49,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Audio.h" />
+		<Unit filename="Configuration.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Configuration.h" />
 		<Unit filename="GameControl.c">
 			<Option compilerVar="CC" />
 		</Unit>

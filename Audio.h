@@ -3,9 +3,13 @@
 
 #include <fmod.h>
 
+#include "Configuration.h"
+
 typedef struct Audio Audio;
 struct Audio
 {
+    Configuration *conf;
+
     FMOD_SYSTEM *system;
 
     FMOD_SOUND *backgroundMusic;
@@ -16,6 +20,8 @@ void audioInit(Audio *aud);
 void audioQuit(Audio *aud);
 
 void audioPause(Audio *aud, int paused);
+void audioSetGlobalVolume(Audio *aud, float volume);
+void audioChangeGlobalVolume(Audio *aud, float volumeAdded);
 
 FMOD_SOUND* audioLoadMusic(Audio *aud, const char* filename);
 void audioFreeMusic(Audio *aud, FMOD_SOUND *music);
