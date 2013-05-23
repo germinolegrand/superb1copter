@@ -75,10 +75,12 @@ int main(int argc, char* argv[])
         {
             if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_F4 && event.key.keysym.mod == KMOD_LALT))
             {
+                ///On arrête le jeu
                 running = 0;
             }
             else if(!paused && event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
             {
+                ///On met en pause
                 pauseBegin = SDL_GetTicks();
                 paused = 1;
 
@@ -86,6 +88,7 @@ int main(int argc, char* argv[])
             }
             else if(paused && event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
             {
+                ///On enlève la pause
                 pausedTime += SDL_GetTicks() - pauseBegin;
                 paused = 0;
 
@@ -94,12 +97,12 @@ int main(int argc, char* argv[])
             else if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_PAGEDOWN)
             {
                 ///On baisse le son
-                audioChangeGlobalVolume(&audio, -0.1f);
+                audioChangeGlobalVolume(&audio, -0.05f);
             }
             else if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_PAGEUP)
             {
                 ///On monte le son
-                audioChangeGlobalVolume(&audio, +0.1f);
+                audioChangeGlobalVolume(&audio, +0.05f);
             }
             else
             {

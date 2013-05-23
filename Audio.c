@@ -34,7 +34,9 @@ void audioSetGlobalVolume(Audio* aud, float volume)
     FMOD_System_GetMasterChannelGroup(aud->system, &channelMaster);
     FMOD_ChannelGroup_SetVolume(channelMaster, volume);
 
-    aud->conf->audioVolume = volume;
+    aud->conf->audioVolume = volume > 1.f ? 1.f
+                           : volume < 0.f ? 0.f
+                           : volume;
 }
 
 void audioChangeGlobalVolume(Audio *aud, float volumeAdded)

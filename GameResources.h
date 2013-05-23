@@ -5,7 +5,9 @@
 #include <SDL/SDL_ttf.h>
 
 #include "Audio.h"
-
+/**
+    Les ressources du jeu
+**/
 typedef struct GameResources GameResources;
 struct GameResources
 {
@@ -21,6 +23,7 @@ struct GameResources
                 *building,
                 *buildingD,
                 *bomb,
+                *bullet,
                 *hostage,
                 *background;
 };

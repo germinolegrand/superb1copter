@@ -6,6 +6,8 @@ void initGame(GameControl* ctrl)
 {
     ctrl->previousTime = SDL_GetTicks();
     ctrl->hostagesInHelico = 0;
+    ctrl->mvt.x = 0;
+    ctrl->mvt.y = 0;
 }
 
 
@@ -14,6 +16,7 @@ void loadLevel(unsigned int level, GameControl *ctrl)
     const GameResources *res = ctrl->res;
     GameShowObjects *gso = ctrl->gso;
 
+    ///Niveau 1
     if(level == 1)
     {
         gso->buildingsNb = 3;
@@ -42,6 +45,8 @@ void loadLevel(unsigned int level, GameControl *ctrl)
         gso->helicoPosition.y = gso->basePosition.y - gso->helico->h;
 
         gso->bombsNb = 0;
+
+        gso->bulletsNb = 0;
 
         gso->hostagesNb = 0;
 
@@ -119,12 +124,21 @@ SDL_Event* processEventsNotPaused(GameControl *ctrl, SDL_Event *event)
         switch(event->type)
         {
             case SDL_KEYDOWN:
-                if(event->key.keysym.sym == SDLK_z)
+                if(event->key.keysym.sym == SDLK_x)
                 {
+                    ///L'hélico lache une bombe
                     ctrl->gso->bombs[ctrl->gso->bombsNb] = ctrl->res->bomb;
                     ctrl->gso->bombsPosition[ctrl->gso->bombsNb].x = -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w/2 - ctrl->res->bomb->w/2;
                     ctrl->gso->bombsPosition[ctrl->gso->bombsNb].y = ctrl->gso->helicoPosition.y + ctrl->gso->helico->h;
                     ++ctrl->gso->bombsNb;
+                }
+                else if(event->key.keysym.sym == SDLK_z)
+                {
+                    ///L'hélico lance une bullet
+                    ctrl->gso->bullets[ctrl->gso->bulletsNb] = ctrl->res->bullet;
+                    ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].x = -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w*(ctrl->gso->helico == ctrl->res->helicoR) - ctrl->res->bomb->w/2;
+                    ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].y = ctrl->gso->helicoPosition.y + ctrl->gso->helico->h/2;
+                    ++ctrl->gso->bulletsNb;
                 }
                 break;
             case SDL_KEYUP:

@@ -21,6 +21,10 @@ struct GameShowObjects
     SDL_Rect bombsPosition[100];
     unsigned int bombsNb;
 
+    SDL_Surface *bullets[100];
+    SDL_Rect bulletsPosition[100];
+    unsigned int bulletsNb;
+
     SDL_Surface *hostages[100];
     SDL_Rect hostagesPosition[100];
     unsigned int hostagesNb;
