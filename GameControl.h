@@ -6,12 +6,6 @@
 #include "GameResources.h"
 #include "GameShow.h"
 
-typedef struct Movement Movement;
-struct Movement
-{
-    int x, y;
-};
-
 typedef struct GameControl GameControl;
 struct GameControl
 {
@@ -21,6 +15,9 @@ struct GameControl
     int previousTime;
 
     Movement mvt;
+
+    int helicoSpeed,
+        bulletsSpeed;
 
     unsigned int hostagesInHelico;
 

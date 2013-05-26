@@ -8,6 +8,8 @@ void initGame(GameControl* ctrl)
     ctrl->hostagesInHelico = 0;
     ctrl->mvt.x = 0;
     ctrl->mvt.y = 0;
+    ctrl->helicoSpeed = 6;
+    ctrl->bulletsSpeed = 9;
 }
 
 
@@ -138,6 +140,8 @@ SDL_Event* processEventsNotPaused(GameControl *ctrl, SDL_Event *event)
                     ctrl->gso->bullets[ctrl->gso->bulletsNb] = ctrl->res->bullet;
                     ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].x = -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w*(ctrl->gso->helico == ctrl->res->helicoR) - ctrl->res->bomb->w/2;
                     ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].y = ctrl->gso->helicoPosition.y + ctrl->gso->helico->h/2;
+                    ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].x = (ctrl->gso->helico == ctrl->res->helicoR) ? +1 : -1;
+                    ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].y = 0;
                     ++ctrl->gso->bulletsNb;
                 }
                 break;
@@ -164,7 +168,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
         if(ctrl->gso->helicoPosition.y + ctrl->gso->helico->h < 0)
         {
             ///On autorise le mouvement horizontal
-            ctrl->gso->backgroundPosition.x -= ctrl->mvt.x * 6;
+            ctrl->gso->backgroundPosition.x -= ctrl->mvt.x * ctrl->helicoSpeed;
 
             ///On interdit la sortie de l'écran par le haut
             if(ctrl->gso->helicoPosition.y + ctrl->gso->backgroundPosition.y <= 0)
@@ -258,6 +262,27 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                 memmove(ctrl->gso->bombs + i, ctrl->gso->bombs + i + 1, (ctrl->gso->bombsNb - i - 1)*sizeof(SDL_Surface*));
                 memmove(ctrl->gso->bombsPosition + i, ctrl->gso->bombsPosition + i + 1, (ctrl->gso->bombsNb - i - 1)*sizeof(SDL_Rect));
                 --ctrl->gso->bombsNb;
+                --i;
+            }
+        }
+
+        ///Les bullets se déplacent
+        for(int i = 0; i < ctrl->gso->bulletsNb; ++i)
+        {
+            ctrl->gso->bulletsPosition[i].x += ctrl->bulletsSpeed*ctrl->gso->bulletsMovement[i].x;
+            ctrl->gso->bulletsPosition[i].y += ctrl->bulletsSpeed*ctrl->gso->bulletsMovement[i].y;
+
+            int helicoRealPosition_x = -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w/2;
+
+            ///Si les bullets sortent du jeu
+            if(ctrl->gso->bulletsPosition[i].y + ctrl->gso->backgroundPosition.y <= 0
+               //TODO c'est buggé
+               || ctrl->gso->bulletsPosition[i].x - helicoRealPosition_x > 500 || ctrl->gso->bulletsPosition[i].x - helicoRealPosition_x < -500)
+            {
+                memmove(ctrl->gso->bullets + i, ctrl->gso->bullets + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Surface*));
+                memmove(ctrl->gso->bulletsPosition + i, ctrl->gso->bulletsPosition + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Rect));
+                memmove(ctrl->gso->bulletsMovement + i, ctrl->gso->bulletsMovement + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Rect));
+                --ctrl->gso->bulletsNb;
                 --i;
             }
         }

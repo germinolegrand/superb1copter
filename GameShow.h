@@ -3,6 +3,12 @@
 
 #include <SDL/SDL.h>
 
+typedef struct Movement Movement;
+struct Movement
+{
+    int x, y;
+};
+
 typedef struct GameShowObjects GameShowObjects;
 struct GameShowObjects
 {
@@ -23,6 +29,7 @@ struct GameShowObjects
 
     SDL_Surface *bullets[100];
     SDL_Rect bulletsPosition[100];
+    Movement bulletsMovement[100];
     unsigned int bulletsNb;
 
     SDL_Surface *hostages[100];
