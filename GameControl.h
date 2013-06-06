@@ -17,7 +17,8 @@ struct GameControl
     Movement mvt;
 
     int helicoSpeed,
-        bulletsSpeed;
+        bulletsSpeed,
+        tanksSpeed;
 
     unsigned int hostagesInHelico;
 

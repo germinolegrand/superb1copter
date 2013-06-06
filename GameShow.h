@@ -32,6 +32,10 @@ struct GameShowObjects
     Movement bulletsMovement[100];
     unsigned int bulletsNb;
 
+    SDL_Surface *ennemies[100];
+    SDL_Rect ennemiesPosition[100];
+    unsigned int ennemiesNb;
+
     SDL_Surface *hostages[100];
     SDL_Rect hostagesPosition[100];
     unsigned int hostagesNb;

@@ -10,6 +10,7 @@ void initGame(GameControl* ctrl)
     ctrl->mvt.y = 0;
     ctrl->helicoSpeed = 6;
     ctrl->bulletsSpeed = 9;
+    ctrl->tanksSpeed = 1;
 }
 
 
@@ -49,6 +50,16 @@ void loadLevel(unsigned int level, GameControl *ctrl)
         gso->bombsNb = 0;
 
         gso->bulletsNb = 0;
+
+        gso->ennemiesNb = 2;
+
+        gso->ennemies[0] = res->tank;
+        gso->ennemiesPosition[0].x = 0;
+        gso->ennemiesPosition[0].y = -gso->ennemies[0]->h;
+
+        gso->ennemies[1] = res->tank;
+        gso->ennemiesPosition[1].x = 2000;
+        gso->ennemiesPosition[1].y = -gso->ennemies[1]->h;
 
         gso->hostagesNb = 0;
 
@@ -162,7 +173,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
 
     if(currentTime - ctrl->previousTime > 10)
     {
-        ctrl->gso->helicoPosition.y += ctrl->mvt.y * 5;
+        ctrl->gso->helicoPosition.y += ctrl->mvt.y * ctrl->helicoSpeed;
 
         ///Si l'hélico n'est pas au sol
         if(ctrl->gso->helicoPosition.y + ctrl->gso->helico->h < 0)
@@ -284,6 +295,21 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                 memmove(ctrl->gso->bulletsMovement + i, ctrl->gso->bulletsMovement + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Rect));
                 --ctrl->gso->bulletsNb;
                 --i;
+            }
+        }
+
+        ///Les ennemis se déplacent
+        for(int i = 0; i < ctrl->gso->ennemiesNb; ++i)
+        {
+            int helicoRealPosition_x = -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w/2;
+
+            ///Si c'est un tank
+            if(ctrl->gso->ennemies[i] == ctrl->res->tank)
+            {
+                int tank_helico_position_difference = ctrl->gso->ennemiesPosition[i].x - helicoRealPosition_x;
+
+                if(tank_helico_position_difference != 0)
+                    ctrl->gso->ennemiesPosition[i].x += (tank_helico_position_difference < 0 ? +1 : -1)*ctrl->tanksSpeed;
             }
         }
 

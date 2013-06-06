@@ -49,6 +49,16 @@ void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime
         SDL_BlitSurface(gso->bullets[i], NULL, ecran, &bbRect);
     }
 
+    ///ennemies
+    for(unsigned int i = 0; i < gso->ennemiesNb; ++i)
+    {
+        SDL_Rect bbRect = gso->ennemiesPosition[i];
+        bbRect.x += gso->backgroundPosition.x;
+        bbRect.y += gso->backgroundPosition.y;
+
+        SDL_BlitSurface(gso->ennemies[i], NULL, ecran, &bbRect);
+    }
+
     ///otages
     for(unsigned int i = 0; i < gso->hostagesNb; ++i)
     {
