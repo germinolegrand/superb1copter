@@ -343,6 +343,9 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
             }
         }
 
+        calculateCollisions(ctrl);
+
+        ///Si l'hélico est en mouvement
         if(ctrl->mvt.x)
         {
             ///L'hélico est tourné dans le bon sens
@@ -355,8 +358,66 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
     return event;
 }
 
-void calculateCollisions()
+void calculateCollisions(GameControl *ctrl)
 {
+    SDL_Rect helicoRect =
+    {
+        -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w/2,
+        ctrl->gso->helicoPosition.y,
+        ctrl->gso->helico->w,
+        ctrl->gso->helico->h
+    };
 
+    ///Pour chaque bullet
+    for(int i = 0; i < ctrl->gso->bulletsNb; ++i)
+    {
+        SDL_Rect bulletRect =
+        {
+            ctrl->gso->bulletsPosition[i].x,
+            ctrl->gso->bulletsPosition[i].y,
+            ctrl->gso->bullets[i]->w,
+            ctrl->gso->bullets[i]->h
+        };
+
+        ///Si collision avec l'hélico
+        if(intersect(&helicoRect, &bulletRect))
+        {
+            ///On perd une vie !
+            --ctrl->lifeCount;
+            ctrl->gso->interface_lifeCount = updateCounter(NULL, ctrl->res->font, "Vies : %d", ctrl->lifeCount);
+
+            //TODO exploser la bullet
+        }
+
+        ///Pour chaque ennemi
+        for(int j = 0; j < ctrl->gso->ennemiesNb; ++j)
+        {
+            SDL_Rect ennemyRect =
+            {
+                ctrl->gso->ennemiesPosition[i].x,
+                ctrl->gso->ennemiesPosition[i].y,
+                ctrl->gso->ennemies[i]->w,
+                ctrl->gso->ennemies[i]->h
+            };
+
+            ///Si collision avec un ennemi
+            if(intersect(&ennemyRect, &bulletRect))
+            {
+                ///Il est détruit !
+                memmove(ctrl->gso->ennemies + j, ctrl->gso->ennemies + j + 1, (ctrl->gso->ennemiesNb - j - 1)*sizeof(SDL_Surface*));
+                memmove(ctrl->gso->ennemiesPosition + j, ctrl->gso->ennemiesPosition + j + 1, (ctrl->gso->ennemiesNb - j - 1)*sizeof(SDL_Rect));
+                --ctrl->gso->ennemiesNb;
+                --j;
+
+                //TODO exploser la bullet
+            }
+        }
+    }
+}
+
+int intersect(const SDL_Rect *rect_a, const SDL_Rect *rect_b)
+{
+    return rect_a->x < rect_b->x + rect_b->w && rect_a->x + rect_a->w > rect_b->x
+        && rect_a->y < rect_b->y + rect_b->h && rect_a->y + rect_a->h > rect_b->y;
 }
 
