@@ -9,6 +9,12 @@
 #include "GameShow.h"
 #include "GameControl.h"
 
+/**
+abbreviations importantes :
+ctrl : game control
+res : resources
+gso : game show object
+**/
 
 int main(int argc, char* argv[])
 {
