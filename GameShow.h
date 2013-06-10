@@ -2,6 +2,7 @@
 #define GAMESHOW_H
 
 #include <SDL/SDL.h>
+#include <SDL/SDL_TTF.h>
 
 typedef struct Movement Movement;
 struct Movement
@@ -50,8 +51,13 @@ struct GameShowObjects
     SDL_Surface *interface_hostagesInHelico;
     SDL_Surface *interface_hostagesWaiting;
     SDL_Surface *interface_hostagesFree;
+
+    SDL_Surface *interface_lifeCount;
 };
 
 void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime);
+
+SDL_Surface* updateCounter(SDL_Surface *surface, TTF_Font *font, const char* text, int count);
+SDL_Surface* updateCounter2(SDL_Surface *surface, TTF_Font *font, const char* text, int count1, int count2);
 
 #endif // GAMESHOW_H

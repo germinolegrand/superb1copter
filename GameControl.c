@@ -5,12 +5,23 @@
 void initGame(GameControl* ctrl)
 {
     ctrl->previousTime = SDL_GetTicks();
+
     ctrl->hostagesInHelico = 0;
     ctrl->mvt.x = 0;
     ctrl->mvt.y = 0;
+
     ctrl->helicoSpeed = 6;
+    ctrl->hostagesSpeed = 1;
     ctrl->bulletsSpeed = 9;
     ctrl->tanksSpeed = 1;
+
+    ctrl->tanksShotInterval = 1000;
+    ctrl->tanksNextShot = ctrl->previousTime + ctrl->tanksShotInterval;
+
+    ctrl->lifeCount = 3;
+
+    ///Interface
+    ctrl->gso->interface_lifeCount = updateCounter(NULL, ctrl->res->font, "Vies : %d", ctrl->lifeCount);
 }
 
 
@@ -25,7 +36,7 @@ void loadLevel(unsigned int level, GameControl *ctrl)
         gso->buildingsNb = 3;
 
         gso->buildings[0] = res->building;
-        gso->buildingsPosition[0].x = 0;
+        gso->buildingsPosition[0].x = 500;
         gso->buildingsPosition[0].y = -gso->buildings[0]->h;
         gso->buildingHostages[0] = 16;
 
@@ -40,7 +51,7 @@ void loadLevel(unsigned int level, GameControl *ctrl)
         gso->buildingHostages[2] = 16;
 
         gso->base = res->base;
-        gso->basePosition.x = 500;
+        gso->basePosition.x = 0;
         gso->basePosition.y = -gso->base->h;
 
         gso->helico = res->helicoR;
@@ -53,11 +64,11 @@ void loadLevel(unsigned int level, GameControl *ctrl)
 
         gso->ennemiesNb = 2;
 
-        gso->ennemies[0] = res->tank;
-        gso->ennemiesPosition[0].x = 0;
+        gso->ennemies[0] = res->tankL;
+        gso->ennemiesPosition[0].x = 3000;
         gso->ennemiesPosition[0].y = -gso->ennemies[0]->h;
 
-        gso->ennemies[1] = res->tank;
+        gso->ennemies[1] = res->tankL;
         gso->ennemiesPosition[1].x = 2000;
         gso->ennemiesPosition[1].y = -gso->ennemies[1]->h;
 
@@ -218,12 +229,12 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                 ///Les otages se rapprochent de l'hélico
                 for(int i = 0; i < ctrl->gso->hostagesNb; ++i)
                 {
-                    ctrl->gso->hostagesPosition[i].x += (ctrl->gso->hostagesPosition[i].x < helicoRealPosition_x) ? +1 : -1;
+                    ctrl->gso->hostagesPosition[i].x += (ctrl->gso->hostagesPosition[i].x < helicoRealPosition_x ? +1 : -1)*ctrl->hostagesSpeed;//TODO CONST
 
                     ///S'il y a suffisamment de place et que l'otage est proche de l'hélico
-                    if(ctrl->hostagesInHelico < 16
-                       && ctrl->gso->hostagesPosition[i].x > helicoRealPosition_x - 10
-                       && ctrl->gso->hostagesPosition[i].x < helicoRealPosition_x + 10)
+                    if(ctrl->hostagesInHelico < 16 //TODO CONST
+                       && ctrl->gso->hostagesPosition[i].x > helicoRealPosition_x - 10 //TODO CONST
+                       && ctrl->gso->hostagesPosition[i].x < helicoRealPosition_x + 10)//TODO CONST
                     {
                         ///L'otage monte dans l'hélico
                         memmove(ctrl->gso->hostages + i, ctrl->gso->hostages + i + 1, (ctrl->gso->hostagesNb - i - 1)*sizeof(SDL_Surface*));
@@ -241,7 +252,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
         ///Les bombes tombent
         for(int i = 0; i < ctrl->gso->bombsNb; ++i)
         {
-            ctrl->gso->bombsPosition[i].y += 5;
+            ctrl->gso->bombsPosition[i].y += 5;//TODO CONST
 
             ///Si la bombe touche le sol
             if(ctrl->gso->bombsPosition[i].y >= 0)
@@ -288,7 +299,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
             ///Si les bullets sortent du jeu
             if(ctrl->gso->bulletsPosition[i].y + ctrl->gso->backgroundPosition.y <= 0
                //TODO c'est buggé
-               || ctrl->gso->bulletsPosition[i].x - helicoRealPosition_x > 500 || ctrl->gso->bulletsPosition[i].x - helicoRealPosition_x < -500)
+               || ctrl->gso->bulletsPosition[i].x - helicoRealPosition_x > 500 || ctrl->gso->bulletsPosition[i].x - helicoRealPosition_x < -500)//TODO CONST
             {
                 memmove(ctrl->gso->bullets + i, ctrl->gso->bullets + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Surface*));
                 memmove(ctrl->gso->bulletsPosition + i, ctrl->gso->bulletsPosition + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Rect));
@@ -304,12 +315,31 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
             int helicoRealPosition_x = -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w/2;
 
             ///Si c'est un tank
-            if(ctrl->gso->ennemies[i] == ctrl->res->tank)
+            if(ctrl->gso->ennemies[i] == ctrl->res->tankL
+               || ctrl->gso->ennemies[i] == ctrl->res->tankR)
             {
                 int tank_helico_position_difference = ctrl->gso->ennemiesPosition[i].x - helicoRealPosition_x;
 
                 if(tank_helico_position_difference != 0)
                     ctrl->gso->ennemiesPosition[i].x += (tank_helico_position_difference < 0 ? +1 : -1)*ctrl->tanksSpeed;
+
+                ///Si le tank est assez proche de l'hélico
+                if(abs(tank_helico_position_difference) < 300 && ctrl->gso->helicoPosition.y > -300)//TODO CONST
+                {
+                    if(currentTime > ctrl->tanksNextShot)
+                    {
+                        ctrl->tanksNextShot = currentTime + ctrl->tanksShotInterval;
+
+                        ctrl->gso->bullets[ctrl->gso->bulletsNb] = ctrl->res->bomb;
+                        ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].x = ctrl->gso->ennemiesPosition[i].x + (ctrl->gso->ennemies[i] == ctrl->res->tankL ? 0 : 1)*ctrl->gso->ennemies[i]->w;
+                        ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].y = -ctrl->gso->ennemies[i]->h;
+
+                        ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].x = (ctrl->gso->ennemies[i] == ctrl->res->tankL ? -1 : 1)*1.f;
+                        ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].y = 0.5f;
+
+                        ++ctrl->gso->bulletsNb;
+                    }
+                }
             }
         }
 
@@ -325,27 +355,8 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
     return event;
 }
 
-
-SDL_Surface* updateCounter(SDL_Surface* surface, TTF_Font *font, const char* text, int count)
+void calculateCollisions()
 {
-    SDL_Color color = {0,0,0};
-    char count_str[100];
-    sprintf(count_str, text, count);
 
-    if(surface)
-        SDL_FreeSurface(surface);
-
-    return TTF_RenderText_Blended(font, count_str, color);
 }
 
-SDL_Surface* updateCounter2(SDL_Surface *surface, TTF_Font *font, const char* text, int count1, int count2)
-{
-    SDL_Color color = {0,0,0};
-    char count_str[100];
-    sprintf(count_str, text, count1, count2);
-
-    if(surface)
-        SDL_FreeSurface(surface);
-
-    return TTF_RenderText_Blended(font, count_str, color);
-}

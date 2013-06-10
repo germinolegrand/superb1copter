@@ -25,7 +25,8 @@ struct GameResources
                 *bomb,
                 *bullet,
                 *hostage,
-                *tank,
+                *tankL,
+                *tankR,
                 *background;
 };
 
