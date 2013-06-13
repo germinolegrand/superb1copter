@@ -124,11 +124,31 @@ int main(int argc, char* argv[])
         ///Sinon le jeu est en cours
         else
         {
-            processEvents(&gControl, SDL_GetTicks() - pausedTime, eventptr);
+            ///Si le joueur n'a pas encore gagné ou perdu
+            if(!gControl.win)
+            {
+                processEvents(&gControl, SDL_GetTicks() - pausedTime, eventptr);
+            }
+            else
+            {
+                if(eventptr)
+                {
+                    switch(eventptr->type)
+                    {
+                        case SDL_KEYDOWN:
+                            running = 0;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
 
+
+
         ///Affichage du jeu
-        SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 0, 0));
+        SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
 
         showGame(ecran, &gShowObjects, SDL_GetTicks());
 

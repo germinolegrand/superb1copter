@@ -100,13 +100,16 @@ void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime
 
         SDL_Rect interface_lifeCountRect = {700,0,0,0};
         SDL_BlitSurface(gso->interface_lifeCount, NULL, ecran, &interface_lifeCountRect);
+
+        SDL_Rect interface_winlooseRect = {400,400,400,400};
+        SDL_BlitSurface(gso->interface_winloose, NULL, ecran, &interface_winlooseRect);
     }
 }
 
 
 SDL_Surface* updateCounter(SDL_Surface* surface, TTF_Font *font, const char* text, int count)
 {
-    SDL_Color color = {0,0,0};
+    SDL_Color color = {255,255,255};
     char count_str[100];
     sprintf(count_str, text, count);
 
@@ -118,7 +121,7 @@ SDL_Surface* updateCounter(SDL_Surface* surface, TTF_Font *font, const char* tex
 
 SDL_Surface* updateCounter2(SDL_Surface *surface, TTF_Font *font, const char* text, int count1, int count2)
 {
-    SDL_Color color = {0,0,0};
+    SDL_Color color = {255,255,255};
     char count_str[100];
     sprintf(count_str, text, count1, count2);
 
@@ -126,4 +129,11 @@ SDL_Surface* updateCounter2(SDL_Surface *surface, TTF_Font *font, const char* te
         SDL_FreeSurface(surface);
 
     return TTF_RenderText_Blended(font, count_str, color);
+}
+SDL_Surface* updateAnnonce(SDL_Surface* surface, TTF_Font *font, const char* text,SDL_Color color)
+{
+    if(surface)
+        SDL_FreeSurface(surface);
+
+    return TTF_RenderText_Blended(font, text, color);
 }

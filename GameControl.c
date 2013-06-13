@@ -19,9 +19,15 @@ void initGame(GameControl* ctrl)
     ctrl->tanksNextShot = ctrl->previousTime + ctrl->tanksShotInterval;
 
     ctrl->lifeCount = 3;
+    ctrl->win = 0;
 
     ///Interface
     ctrl->gso->interface_lifeCount = updateCounter(NULL, ctrl->res->font, "Vies : %d", ctrl->lifeCount);
+    SDL_Color annonce_color = {255,255,255};
+    ctrl->gso->interface_winloose =updateAnnonce(NULL,ctrl->res->font,"",annonce_color);
+
+
+
 }
 
 
@@ -34,6 +40,7 @@ void loadLevel(unsigned int level, GameControl *ctrl)
     if(level == 1)
     {
         gso->buildingsNb = 3;
+        gso->buildingHostagesNb = gso->buildingsNb*16;
 
         gso->buildings[0] = res->building;
         gso->buildingsPosition[0].x = 500;
@@ -159,9 +166,11 @@ SDL_Event* processEventsNotPaused(GameControl *ctrl, SDL_Event *event)
                 else if(event->key.keysym.sym == SDLK_z)
                 {
                     ///L'hélico lance une bullet
+                     ///TODO CODE MEGA BUGGGGGG
                     ctrl->gso->bullets[ctrl->gso->bulletsNb] = ctrl->res->bullet;
-                    ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].x = -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w*(ctrl->gso->helico == ctrl->res->helicoR) - ctrl->res->bomb->w/2;
+                    ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].x = -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w*(ctrl->gso->helico == ctrl->res->helicoR) + ctrl->res->bullet->w; //- ctrl->res->bullet->w/2;
                     ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].y = ctrl->gso->helicoPosition.y + ctrl->gso->helico->h/2;
+
                     ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].x = (ctrl->gso->helico == ctrl->res->helicoR) ? +1 : -1;
                     ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].y = 0;
                     ++ctrl->gso->bulletsNb;
@@ -278,6 +287,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                         }
 
                         ctrl->gso->hostagesNb += ctrl->gso->buildingHostages[j];
+                        ctrl->gso->buildingHostagesNb -= ctrl->gso->buildingHostages[j];
                     }
                 }
 
@@ -345,6 +355,28 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
 
         calculateCollisions(ctrl);
 
+        if(ctrl->hostagesInHelico == 0 && ctrl->gso->buildingHostagesNb == 0 && ctrl->gso->hostagesNb == 0)
+        {
+            ///Si on a gagné
+            if(ctrl->gso->baseHostagesNb >= ctrl->minimumHostagesFreeGoal)
+            {
+                ///Audio
+                audioPlayBackgroundMusic(ctrl->res->audio, ctrl->res->win);
+                SDL_Color annonce_color = {0,255,0};
+                ctrl->gso->interface_winloose = updateAnnonce(ctrl->gso->interface_winloose, ctrl->res->font, "Vous avez gagne !", annonce_color);
+                ctrl->win = 1;
+            }
+            ///Si on a perdu
+            else
+            {
+                ///Audio
+                audioPlayBackgroundMusic(ctrl->res->audio, ctrl->res->loose);
+                SDL_Color annonce_color = {255,0,0};
+                ctrl->gso->interface_winloose = updateAnnonce(ctrl->gso->interface_winloose, ctrl->res->font, "Vous avez perdu !", annonce_color);
+                ctrl->win = -1;
+            }
+        }
+
         ///Si l'hélico est en mouvement
         if(ctrl->mvt.x)
         {
@@ -362,7 +394,7 @@ void calculateCollisions(GameControl *ctrl)
 {
     SDL_Rect helicoRect =
     {
-        -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w/2,
+        -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x,
         ctrl->gso->helicoPosition.y,
         ctrl->gso->helico->w,
         ctrl->gso->helico->h
@@ -383,7 +415,7 @@ void calculateCollisions(GameControl *ctrl)
         if(intersect(&helicoRect, &bulletRect))
         {
             ///On perd une vie !
-                looselife (ctrl);
+                looselife(ctrl);
             //TODO exploser la bullet
         }
 
@@ -392,10 +424,10 @@ void calculateCollisions(GameControl *ctrl)
         {
             SDL_Rect ennemyRect =
             {
-                ctrl->gso->ennemiesPosition[i].x,
-                ctrl->gso->ennemiesPosition[i].y,
-                ctrl->gso->ennemies[i]->w,
-                ctrl->gso->ennemies[i]->h
+                ctrl->gso->ennemiesPosition[j].x,
+                ctrl->gso->ennemiesPosition[j].y,
+                ctrl->gso->ennemies[j]->w,
+                ctrl->gso->ennemies[j]->h
             };
 
             ///Si collision avec un ennemi
@@ -415,30 +447,36 @@ void calculateCollisions(GameControl *ctrl)
 
 int intersect(const SDL_Rect *rect_a, const SDL_Rect *rect_b)
 {
-    return rect_a->x < rect_b->x + rect_b->w && rect_a->x + rect_a->w > rect_b->x
-        && rect_a->y < rect_b->y + rect_b->h && rect_a->y + rect_a->h > rect_b->y;
+    return rect_a->x < rect_b->x + rect_b->w // ok
+        && rect_a->x + rect_a->w > rect_b->x // ok
+        && rect_a->y < rect_b->y + rect_b->h //ok
+        && rect_a->y + rect_a->h > rect_b->y; // ok
 }
 
 
 
-void looselife (GameControl *ctrl)
+void looselife(GameControl *ctrl)
 {
     --ctrl->lifeCount;
-    ctrl->gso->interface_lifeCount = updateCounter(NULL, ctrl->res->font, "Vies : %d", ctrl->lifeCount);
-    if (ctrl->lifeCount == 2 )
+    ctrl->gso->interface_lifeCount = updateCounter(ctrl->gso->interface_lifeCount, ctrl->res->font, "Vies : %d", ctrl->lifeCount);
+
+    if(ctrl->lifeCount == 2)
     {
                 ///Audio
         audioPlayBackgroundMusic(ctrl->res->audio, ctrl->res->bgMusic2);
     }
-        if (ctrl->lifeCount == 1 )
+    else if(ctrl->lifeCount == 1)
     {
                 ///Audio
         audioPlayBackgroundMusic(ctrl->res->audio, ctrl->res->bgMusic1);
     }
-            if (ctrl->lifeCount == 1 )
+    else if(ctrl->lifeCount == 0) /// On perd !
     {
-                ///Audio
+        ///Audio
         audioPlayBackgroundMusic(ctrl->res->audio, ctrl->res->loose);
+        SDL_Color annonce_color = {255,0,0};
+        ctrl->gso->interface_winloose = updateAnnonce(ctrl->gso->interface_winloose, ctrl->res->font, "Vous avez perdu !", annonce_color);
+        ctrl->win=-1;
     }
 }
 

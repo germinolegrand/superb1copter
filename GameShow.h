@@ -23,6 +23,7 @@ struct GameShowObjects
     SDL_Rect buildingsPosition[100];
     unsigned int buildingHostages[100];
     unsigned int buildingsNb;
+    unsigned int buildingHostagesNb;
 
     SDL_Surface *bombs[100];
     SDL_Rect bombsPosition[100];
@@ -51,13 +52,17 @@ struct GameShowObjects
     SDL_Surface *interface_hostagesInHelico;
     SDL_Surface *interface_hostagesWaiting;
     SDL_Surface *interface_hostagesFree;
-
+    ///VIES
     SDL_Surface *interface_lifeCount;
+    ///WIN
+    SDL_Surface *interface_winloose;
 };
 
 void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime);
 
 SDL_Surface* updateCounter(SDL_Surface *surface, TTF_Font *font, const char* text, int count);
 SDL_Surface* updateCounter2(SDL_Surface *surface, TTF_Font *font, const char* text, int count1, int count2);
+
+SDL_Surface* updateAnnonce(SDL_Surface* surface, TTF_Font *font, const char* text,SDL_Color color);
 
 #endif // GAMESHOW_H

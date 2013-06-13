@@ -29,6 +29,7 @@ struct GameControl
     unsigned int minimumHostagesFreeGoal;
 
     unsigned int lifeCount;
+    int win;
 };
 
 void initGame(GameControl *ctrl);
@@ -39,6 +40,6 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
 
 void calculateCollisions(GameControl *ctrl);
 int intersect(const SDL_Rect *rect_a, const SDL_Rect *rest_b);
-void looselife (GameControl *ctrl);
+void looselife(GameControl *ctrl);
 
 #endif // GAMECONTROL_H
