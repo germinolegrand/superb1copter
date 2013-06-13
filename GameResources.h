@@ -13,7 +13,12 @@ struct GameResources
 {
     Audio *audio;
 
-    FMOD_SOUND *bgMusic1;
+    FMOD_SOUND  *bgMusic1,
+                *bgMusic2,
+                *bgMusic3,
+                *loose,
+                *win,
+                *menu;
 
     TTF_Font *font;
 

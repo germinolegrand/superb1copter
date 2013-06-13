@@ -3,7 +3,12 @@
 void loadResources(GameResources *res)
 {
     ///musiques
-    res->bgMusic1 = audioLoadMusic(res->audio, "Ressources/Son/tro.xm");
+    res->bgMusic1 = audioLoadMusic(res->audio, "Ressources/Son/mainthemelife1.xm");
+    res->bgMusic2 = audioLoadMusic(res->audio, "Ressources/Son/mainthemelife2.xm");
+    res->bgMusic3 = audioLoadMusic(res->audio, "Ressources/Son/mainthemelife3.xm");
+    res->loose = audioLoadMusic(res->audio, "Ressources/Son/loose.xm");
+    res->win = audioLoadMusic(res->audio, "Ressources/Son/win.xm");
+    res->menu = audioLoadMusic(res->audio, "Ressources/Son/menu.xm");
 
     ///polices
     res->font = TTF_OpenFont("Ressources/Fonts/arial.ttf", 20);

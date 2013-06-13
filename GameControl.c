@@ -87,7 +87,7 @@ void loadLevel(unsigned int level, GameControl *ctrl)
         gso->interface_hostagesFree = updateCounter2(NULL, res->font, "Otages libres : %d/%d", gso->baseHostagesNb, ctrl->minimumHostagesFreeGoal);
 
         ///Audio
-        audioPlayBackgroundMusic(res->audio, res->bgMusic1);
+        audioPlayBackgroundMusic(res->audio, res->bgMusic3);
     }
 }
 
@@ -383,9 +383,7 @@ void calculateCollisions(GameControl *ctrl)
         if(intersect(&helicoRect, &bulletRect))
         {
             ///On perd une vie !
-            --ctrl->lifeCount;
-            ctrl->gso->interface_lifeCount = updateCounter(NULL, ctrl->res->font, "Vies : %d", ctrl->lifeCount);
-
+                looselife (ctrl);
             //TODO exploser la bullet
         }
 
@@ -420,4 +418,30 @@ int intersect(const SDL_Rect *rect_a, const SDL_Rect *rect_b)
     return rect_a->x < rect_b->x + rect_b->w && rect_a->x + rect_a->w > rect_b->x
         && rect_a->y < rect_b->y + rect_b->h && rect_a->y + rect_a->h > rect_b->y;
 }
+
+
+
+void looselife (GameControl *ctrl)
+{
+    --ctrl->lifeCount;
+    ctrl->gso->interface_lifeCount = updateCounter(NULL, ctrl->res->font, "Vies : %d", ctrl->lifeCount);
+    if (ctrl->lifeCount == 2 )
+    {
+                ///Audio
+        audioPlayBackgroundMusic(ctrl->res->audio, ctrl->res->bgMusic2);
+    }
+        if (ctrl->lifeCount == 1 )
+    {
+                ///Audio
+        audioPlayBackgroundMusic(ctrl->res->audio, ctrl->res->bgMusic1);
+    }
+            if (ctrl->lifeCount == 1 )
+    {
+                ///Audio
+        audioPlayBackgroundMusic(ctrl->res->audio, ctrl->res->loose);
+    }
+}
+
+
+
 
