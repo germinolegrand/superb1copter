@@ -16,6 +16,8 @@ res : resources
 gso : game show object
 **/
 
+int game(int level,GameControl* ctrl,SDL_Surface* ecran);
+
 int main(int argc, char* argv[])
 {
     printf("Hello B1 world!\n");
@@ -57,10 +59,32 @@ int main(int argc, char* argv[])
     gControl.res = &gResources;
     gControl.gso = &gShowObjects;
 
-    initGame(&gControl);
+
+    int gameLvl = 1;
+    while (game(gameLvl++,&gControl,ecran)) ;
+
+
+
+    ///Libération des ressources
+    freeResources(&gResources);
+
+    audioQuit(&audio);
+
+    TTF_Quit();
+    SDL_Quit();
+
+    ///Sauvegarde de la configuration
+    saveConfiguration(&config, "Config.txt");
+
+    return EXIT_SUCCESS;
+}
+
+int game(int level,GameControl* ctrl,SDL_Surface* ecran)
+{
+    initGame(ctrl);
 
     ///Chargement du premier niveau
-    loadLevel(1, &gControl);
+    loadLevel(level, ctrl);
 
 
     ///Début du jeu
@@ -90,7 +114,7 @@ int main(int argc, char* argv[])
                 pauseBegin = SDL_GetTicks();
                 paused = 1;
 
-                audioPause(&audio, paused);
+                audioPause(ctrl->res->audio, paused);
             }
             else if(paused && event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
             {
@@ -98,17 +122,17 @@ int main(int argc, char* argv[])
                 pausedTime += SDL_GetTicks() - pauseBegin;
                 paused = 0;
 
-                audioPause(&audio, paused);
+                audioPause(ctrl->res->audio, paused);
             }
             else if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_PAGEDOWN)
             {
                 ///On baisse le son
-                audioChangeGlobalVolume(&audio, -0.05f);
+                audioChangeGlobalVolume(ctrl->res->audio, -0.05f);
             }
             else if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_PAGEUP)
             {
                 ///On monte le son
-                audioChangeGlobalVolume(&audio, +0.05f);
+                audioChangeGlobalVolume(ctrl->res->audio, +0.05f);
             }
             else
             {
@@ -119,15 +143,15 @@ int main(int argc, char* argv[])
         ///Si le jeu est actuellement en pause
         if(paused)
         {
-            processEventsPaused(&gControl, eventptr);
+            processEventsPaused(ctrl, eventptr);
         }
         ///Sinon le jeu est en cours
         else
         {
             ///Si le joueur n'a pas encore gagné ou perdu
-            if(!gControl.win)
+            if(!ctrl->win)
             {
-                processEvents(&gControl, SDL_GetTicks() - pausedTime, eventptr);
+                processEvents(ctrl, SDL_GetTicks() - pausedTime, eventptr);
             }
             else
             {
@@ -145,28 +169,14 @@ int main(int argc, char* argv[])
             }
         }
 
-
-
         ///Affichage du jeu
         SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
 
-        showGame(ecran, &gShowObjects, SDL_GetTicks());
+        showGame(ecran, ctrl->gso, SDL_GetTicks());
 
         SDL_Flip(ecran);
     }
 
-    ///Libération des ressources
-    freeResources(&gResources);
-
-    audioQuit(&audio);
-
-    TTF_Quit();
-    SDL_Quit();
-
-    ///Sauvegarde de la configuration
-    saveConfiguration(&config, "Config.txt");
-
-    return EXIT_SUCCESS;
+    return ctrl->win == 1;
 }
-
 

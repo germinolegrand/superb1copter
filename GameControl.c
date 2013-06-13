@@ -24,10 +24,7 @@ void initGame(GameControl* ctrl)
     ///Interface
     ctrl->gso->interface_lifeCount = updateCounter(NULL, ctrl->res->font, "Vies : %d", ctrl->lifeCount);
     SDL_Color annonce_color = {255,255,255};
-    ctrl->gso->interface_winloose =updateAnnonce(NULL,ctrl->res->font,"",annonce_color);
-
-
-
+    ctrl->gso->interface_winloose = updateAnnonce(NULL, ctrl->res->font, "", annonce_color);
 }
 
 
@@ -36,8 +33,132 @@ void loadLevel(unsigned int level, GameControl *ctrl)
     const GameResources *res = ctrl->res;
     GameShowObjects *gso = ctrl->gso;
 
+    initGame(ctrl);
+
     ///Niveau 1
     if(level == 1)
+    {
+        gso->buildingsNb = 3;
+        gso->buildingHostagesNb = gso->buildingsNb*16;
+
+        gso->buildings[0] = res->building;
+        gso->buildingsPosition[0].x = 500;
+        gso->buildingsPosition[0].y = -gso->buildings[0]->h;
+        gso->buildingHostages[0] = 16;
+
+        gso->buildings[1] = res->building;
+        gso->buildingsPosition[1].x = 1200;
+        gso->buildingsPosition[1].y = -gso->buildings[1]->h;
+        gso->buildingHostages[1] = 16;
+
+        gso->buildings[2] = res->building;
+        gso->buildingsPosition[2].x = 900;
+        gso->buildingsPosition[2].y = -gso->buildings[2]->h;
+        gso->buildingHostages[2] = 16;
+
+        gso->base = res->base;
+        gso->basePosition.x = 0;
+        gso->basePosition.y = -gso->base->h;
+
+        gso-> helico = res->helicoR;
+        gso->helicoPosition.x = 400 - gso->helico->w/2;
+        gso->helicoPosition.y = gso->basePosition.y - gso->helico->h;
+
+        gso->bombsNb = 0;
+
+        gso->bulletsNb = 0;
+
+        gso->ennemiesNb = 2;
+
+        gso->ennemies[0] = res->tankL;
+        gso->ennemiesPosition[0].x = 3000;
+        gso->ennemiesPosition[0].y = -gso->ennemies[0]->h;
+
+        gso->ennemies[1] = res->tankL;
+        gso->ennemiesPosition[1].x = 2000;
+        gso->ennemiesPosition[1].y = -gso->ennemies[1]->h;
+
+        gso->hostagesNb = 0;
+
+        gso->baseHostagesNb = 0;
+
+        gso->backgroundPosition.x = 400 - gso->basePosition.x - gso->base->w/2;
+        gso->backgroundPosition.y = 400;
+
+        ctrl->minimumHostagesFreeGoal = 25;
+
+        ///Interface
+        gso->interface_hostagesInHelico = updateCounter(NULL, res->font, "Otages dans l'helico : %d/16", ctrl->hostagesInHelico);
+        gso->interface_hostagesWaiting = updateCounter(NULL, res->font, "Otages a sauver : %d", gso->hostagesNb);
+        gso->interface_hostagesFree = updateCounter2(NULL, res->font, "Otages libres : %d/%d", gso->baseHostagesNb, ctrl->minimumHostagesFreeGoal);
+
+        ///Audio
+        audioPlayBackgroundMusic(res->audio, res->bgMusic3);
+    }
+
+        ///Niveau 2
+    if(level == 2)
+    {
+        gso->buildingsNb = 3;
+        gso->buildingHostagesNb = gso->buildingsNb*16;
+
+        gso->buildings[0] = res->building;
+        gso->buildingsPosition[0].x = 500;
+        gso->buildingsPosition[0].y = -gso->buildings[0]->h;
+        gso->buildingHostages[0] = 5;
+
+        gso->buildings[1] = res->building;
+        gso->buildingsPosition[1].x = 1200;
+        gso->buildingsPosition[1].y = -gso->buildings[1]->h;
+        gso->buildingHostages[1] = 5;
+
+        gso->buildings[2] = res->building;
+        gso->buildingsPosition[2].x = 900;
+        gso->buildingsPosition[2].y = -gso->buildings[2]->h;
+        gso->buildingHostages[2] = 5;
+
+        gso->base = res->base;
+        gso->basePosition.x = 0;
+        gso->basePosition.y = -gso->base->h;
+
+        gso->helico = res->helicoR;
+        gso->helicoPosition.x = 400 - gso->helico->w/2;
+        gso->helicoPosition.y = gso->basePosition.y - gso->helico->h;
+
+        gso->bombsNb = 0;
+
+        gso->bulletsNb = 0;
+
+        gso->ennemiesNb = 2;
+
+        gso->ennemies[0] = res->tankL;
+        gso->ennemiesPosition[0].x = 3000;
+        gso->ennemiesPosition[0].y = -gso->ennemies[0]->h;
+
+        gso->ennemies[1] = res->tankL;
+        gso->ennemiesPosition[1].x = 2000;
+        gso->ennemiesPosition[1].y = -gso->ennemies[1]->h;
+
+        gso->hostagesNb = 0;
+
+        gso->baseHostagesNb = 0;
+
+        gso->backgroundPosition.x = 400 - gso->basePosition.x - gso->base->w/2;
+        gso->backgroundPosition.y = 400;
+
+        ctrl->minimumHostagesFreeGoal = 25;
+
+        ///Interface
+        gso->interface_hostagesInHelico = updateCounter(NULL, res->font, "Otages dans l'helico : %d/16", ctrl->hostagesInHelico);
+        gso->interface_hostagesWaiting = updateCounter(NULL, res->font, "Otages a sauver : %d", gso->hostagesNb);
+        gso->interface_hostagesFree = updateCounter2(NULL, res->font, "Otages libres : %d/%d", gso->baseHostagesNb, ctrl->minimumHostagesFreeGoal);
+
+        ///Audio
+        audioPlayBackgroundMusic(res->audio, res->bgMusic3);
+    }
+
+        ///Niveau 3
+    if(level == 3)
     {
         gso->buildingsNb = 3;
         gso->buildingHostagesNb = gso->buildingsNb*16;
@@ -96,6 +217,10 @@ void loadLevel(unsigned int level, GameControl *ctrl)
         ///Audio
         audioPlayBackgroundMusic(res->audio, res->bgMusic3);
     }
+
+
+
+
 }
 
 SDL_Event* processEventsPaused(GameControl *ctrl, SDL_Event *event)
@@ -166,9 +291,8 @@ SDL_Event* processEventsNotPaused(GameControl *ctrl, SDL_Event *event)
                 else if(event->key.keysym.sym == SDLK_z)
                 {
                     ///L'hélico lance une bullet
-                     ///TODO CODE MEGA BUGGGGGG
                     ctrl->gso->bullets[ctrl->gso->bulletsNb] = ctrl->res->bullet;
-                    ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].x = -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w*(ctrl->gso->helico == ctrl->res->helicoR) + ctrl->res->bullet->w; //- ctrl->res->bullet->w/2;
+                    ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].x = -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w*(ctrl->gso->helico == ctrl->res->helicoR) + ctrl->res->bullet->w*(ctrl->gso->helico == ctrl->res->helicoR);
                     ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].y = ctrl->gso->helicoPosition.y + ctrl->gso->helico->h/2;
 
                     ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].x = (ctrl->gso->helico == ctrl->res->helicoR) ? +1 : -1;
