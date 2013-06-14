@@ -34,7 +34,7 @@ void loadLevel(unsigned int level, GameControl *ctrl)
     GameShowObjects *gso = ctrl->gso;
 
     initGame(ctrl);
-
+    ctrl->gso->interface_levelCount = updateCounter(NULL, ctrl->res->font, "Niveau : %d",level);
     ///Niveau 1
     if(level == 1)
     {
@@ -105,17 +105,17 @@ void loadLevel(unsigned int level, GameControl *ctrl)
         gso->buildings[0] = res->building;
         gso->buildingsPosition[0].x = 500;
         gso->buildingsPosition[0].y = -gso->buildings[0]->h;
-        gso->buildingHostages[0] = 5;
+        gso->buildingHostages[0] = 16;
 
         gso->buildings[1] = res->building;
         gso->buildingsPosition[1].x = 1200;
         gso->buildingsPosition[1].y = -gso->buildings[1]->h;
-        gso->buildingHostages[1] = 5;
+        gso->buildingHostages[1] = 16;
 
         gso->buildings[2] = res->building;
         gso->buildingsPosition[2].x = 900;
         gso->buildingsPosition[2].y = -gso->buildings[2]->h;
-        gso->buildingHostages[2] = 5;
+        gso->buildingHostages[2] = 16;
 
         gso->base = res->base;
         gso->basePosition.x = 0;
@@ -455,7 +455,10 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                 int tank_helico_position_difference = ctrl->gso->ennemiesPosition[i].x - helicoRealPosition_x;
 
                 if(tank_helico_position_difference != 0)
+                {
                     ctrl->gso->ennemiesPosition[i].x += (tank_helico_position_difference < 0 ? +1 : -1)*ctrl->tanksSpeed;
+                    ctrl->gso->ennemies[i] = (tank_helico_position_difference < 0 ? ctrl->res->tankR : ctrl->res->tankL);
+                }
 
                 ///Si le tank est assez proche de l'hélico
                 if(abs(tank_helico_position_difference) < 300 && ctrl->gso->helicoPosition.y > -300)//TODO CONST
@@ -465,7 +468,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                         ctrl->tanksNextShot = currentTime + ctrl->tanksShotInterval;
 
                         ctrl->gso->bullets[ctrl->gso->bulletsNb] = ctrl->res->bomb;
-                        ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].x = ctrl->gso->ennemiesPosition[i].x + (ctrl->gso->ennemies[i] == ctrl->res->tankL ? 0 : 1)*ctrl->gso->ennemies[i]->w;
+                        ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].x = ctrl->gso->ennemiesPosition[i].x + (ctrl->gso->ennemies[i] == ctrl->res->tankR)*ctrl->gso->ennemies[i]->w + (ctrl->gso->ennemies[i] == ctrl->res->tankL ? -1 : 0)*ctrl->gso->bullets[ctrl->gso->bulletsNb]->w;
                         ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].y = -ctrl->gso->ennemies[i]->h;
 
                         ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].x = (ctrl->gso->ennemies[i] == ctrl->res->tankL ? -1 : 1)*1.f;
@@ -539,8 +542,14 @@ void calculateCollisions(GameControl *ctrl)
         if(intersect(&helicoRect, &bulletRect))
         {
             ///On perd une vie !
-                looselife(ctrl);
-            //TODO exploser la bullet
+            looselife(ctrl);
+            ///Exploser la bullet
+            memmove(ctrl->gso->bullets + i, ctrl->gso->bullets + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Surface*));
+            memmove(ctrl->gso->bulletsPosition + i, ctrl->gso->bulletsPosition + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Rect));
+            --ctrl->gso->bulletsNb;
+            --i;
+
+            return;
         }
 
         ///Pour chaque ennemi
@@ -563,7 +572,65 @@ void calculateCollisions(GameControl *ctrl)
                 --ctrl->gso->ennemiesNb;
                 --j;
 
-                //TODO exploser la bullet
+                ///Exploser la bullet
+                memmove(ctrl->gso->bullets + i, ctrl->gso->bullets + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Surface*));
+                memmove(ctrl->gso->bulletsPosition + i, ctrl->gso->bulletsPosition + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Rect));
+                --ctrl->gso->bulletsNb;
+                --i;
+            }
+        }
+    }
+
+    ///Pour chaque bombe
+    for(int i = 0; i < ctrl->gso->bombsNb; ++i)
+    {
+        SDL_Rect bombRect =
+        {
+            ctrl->gso->bombsPosition[i].x,
+            ctrl->gso->bombsPosition[i].y,
+            ctrl->gso->bombs[i]->w,
+            ctrl->gso->bombs[i]->h
+        };
+
+        ///Si collision avec l'hélico
+        if(intersect(&helicoRect, &bombRect))
+        {
+            ///On perd une vie !
+            looselife(ctrl);
+            ///Exploser la bombe
+            memmove(ctrl->gso->bombs + i, ctrl->gso->bombs + i + 1, (ctrl->gso->bombsNb - i - 1)*sizeof(SDL_Surface*));
+            memmove(ctrl->gso->bombsPosition + i, ctrl->gso->bombsPosition + i + 1, (ctrl->gso->bombsNb - i - 1)*sizeof(SDL_Rect));
+            --ctrl->gso->bombsNb;
+            --i;
+
+            return;
+        }
+
+        ///Pour chaque ennemi
+        for(int j = 0; j < ctrl->gso->ennemiesNb; ++j)
+        {
+            SDL_Rect ennemyRect =
+            {
+                ctrl->gso->ennemiesPosition[j].x,
+                ctrl->gso->ennemiesPosition[j].y,
+                ctrl->gso->ennemies[j]->w,
+                ctrl->gso->ennemies[j]->h
+            };
+
+            ///Si collision avec un ennemi
+            if(intersect(&ennemyRect, &bombRect))
+            {
+                ///Il est détruit !
+                memmove(ctrl->gso->ennemies + j, ctrl->gso->ennemies + j + 1, (ctrl->gso->ennemiesNb - j - 1)*sizeof(SDL_Surface*));
+                memmove(ctrl->gso->ennemiesPosition + j, ctrl->gso->ennemiesPosition + j + 1, (ctrl->gso->ennemiesNb - j - 1)*sizeof(SDL_Rect));
+                --ctrl->gso->ennemiesNb;
+                --j;
+
+                ///Exploser la bullet
+                memmove(ctrl->gso->bombs + i, ctrl->gso->bombs + i + 1, (ctrl->gso->bombsNb - i - 1)*sizeof(SDL_Surface*));
+                memmove(ctrl->gso->bombsPosition + i, ctrl->gso->bombsPosition + i + 1, (ctrl->gso->bombsNb - i - 1)*sizeof(SDL_Rect));
+                --ctrl->gso->bombsNb;
+                --i;
             }
         }
     }

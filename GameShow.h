@@ -54,6 +54,8 @@ struct GameShowObjects
     SDL_Surface *interface_hostagesFree;
     ///VIES
     SDL_Surface *interface_lifeCount;
+    ///Level
+    SDL_Surface *interface_levelCount;
     ///WIN
     SDL_Surface *interface_winloose;
 };

@@ -155,6 +155,7 @@ int game(int level,GameControl* ctrl,SDL_Surface* ecran)
             }
             else
             {
+                processEventsPaused(ctrl, eventptr);
                 if(eventptr)
                 {
                     switch(eventptr->type)

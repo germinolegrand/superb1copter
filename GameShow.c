@@ -98,7 +98,10 @@ void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime
         SDL_Rect interface_hostageFreeRect = {0,40,0,0};
         SDL_BlitSurface(gso->interface_hostagesFree, NULL, ecran, &interface_hostageFreeRect);
 
-        SDL_Rect interface_lifeCountRect = {700,0,0,0};
+        SDL_Rect interface_levelCountRect = {700,0,0,0};
+        SDL_BlitSurface(gso->interface_levelCount, NULL, ecran, &interface_levelCountRect);
+
+        SDL_Rect interface_lifeCountRect = {700,40,0,0};
         SDL_BlitSurface(gso->interface_lifeCount, NULL, ecran, &interface_lifeCountRect);
 
         SDL_Rect interface_winlooseRect = {400,400,400,400};
