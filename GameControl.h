@@ -33,6 +33,8 @@ struct GameControl
 };
 
 void initGame(GameControl *ctrl);
+void quitGame(GameControl* ctrl);
+
 void loadLevel(unsigned int level, GameControl *ctrl);
 
 SDL_Event* processEventsPaused(GameControl *ctrl, SDL_Event *event);

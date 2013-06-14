@@ -23,7 +23,8 @@ void loadResources(GameResources *res)
     res->bomb = SDL_LoadBMP("Ressources/Images/bomb.bmp");
     res->bullet = SDL_LoadBMP("Ressources/Images/bullet.bmp");
 
-    res->hostage = SDL_LoadBMP("Ressources/Images/hostagee.bmp");
+    res->hostageL = SDL_LoadBMP("Ressources/Images/hostageL.bmp");
+    res->hostageR = SDL_LoadBMP("Ressources/Images/hostageR.bmp");
 
     res->tankL = SDL_LoadBMP("Ressources/Images/tankL.bmp");
     res->tankR = SDL_LoadBMP("Ressources/Images/tankR.bmp");
@@ -40,7 +41,8 @@ void loadResources(GameResources *res)
     SDL_SetColorKey(res->bullet,     SDL_SRCCOLORKEY, SDL_MapRGB(res->bullet->format,     255, 0, 255));
     SDL_SetColorKey(res->tankL,      SDL_SRCCOLORKEY, SDL_MapRGB(res->tankL->format,      255, 0, 255));
     SDL_SetColorKey(res->tankR,      SDL_SRCCOLORKEY, SDL_MapRGB(res->tankR->format,      255, 0, 255));
-    SDL_SetColorKey(res->hostage,    SDL_SRCCOLORKEY, SDL_MapRGB(res->hostage->format,    255, 0, 255));
+    SDL_SetColorKey(res->hostageL,   SDL_SRCCOLORKEY, SDL_MapRGB(res->hostageL->format,   255, 0, 255));
+    SDL_SetColorKey(res->hostageR,   SDL_SRCCOLORKEY, SDL_MapRGB(res->hostageR->format,   255, 0, 255));
     //SDL_SetColorKey(res->background, SDL_SRCCOLORKEY, SDL_MapRGB(res->background->format, 255, 0, 255));
 }
 
@@ -54,7 +56,8 @@ void freeResources(GameResources *res)
     SDL_FreeSurface(res->buildingD);
     SDL_FreeSurface(res->bomb);
     SDL_FreeSurface(res->bullet);
-    SDL_FreeSurface(res->hostage);
+    SDL_FreeSurface(res->hostageL);
+    SDL_FreeSurface(res->hostageR);
     SDL_FreeSurface(res->tankL);
     SDL_FreeSurface(res->tankR);
     //SDL_FreeSurface(res->background);

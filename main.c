@@ -59,11 +59,12 @@ int main(int argc, char* argv[])
     gControl.res = &gResources;
     gControl.gso = &gShowObjects;
 
+    initGame(&gControl);
 
     int gameLvl = 1;
-    while (game(gameLvl++,&gControl,ecran)) ;
+    while(game(gameLvl++, &gControl, ecran));
 
-
+    quitGame(&gControl);
 
     ///Libération des ressources
     freeResources(&gResources);
@@ -81,9 +82,7 @@ int main(int argc, char* argv[])
 
 int game(int level,GameControl* ctrl,SDL_Surface* ecran)
 {
-    initGame(ctrl);
-
-    ///Chargement du premier niveau
+    ///Chargement du niveau
     loadLevel(level, ctrl);
 
 

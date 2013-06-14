@@ -4,11 +4,38 @@
 
 void initGame(GameControl* ctrl)
 {
+    ctrl->mvt.x = 0;
+    ctrl->mvt.y = 0;
+
+    ///Interface
+    ctrl->gso->interface_hostagesInHelico = NULL;
+    ctrl->gso->interface_hostagesWaiting = NULL;
+    ctrl->gso->interface_hostagesFree = NULL;
+    ctrl->gso->interface_lifeCount = NULL;
+    ctrl->gso->interface_levelCount = NULL;
+    ctrl->gso->interface_winloose = NULL;
+}
+
+void quitGame(GameControl* ctrl)
+{
+    ///Interface
+    SDL_FreeSurface(ctrl->gso->interface_hostagesInHelico);
+    SDL_FreeSurface(ctrl->gso->interface_hostagesWaiting);
+    SDL_FreeSurface(ctrl->gso->interface_hostagesFree);
+    SDL_FreeSurface(ctrl->gso->interface_lifeCount);
+    SDL_FreeSurface(ctrl->gso->interface_levelCount);
+    SDL_FreeSurface(ctrl->gso->interface_winloose);
+}
+
+
+void loadLevel(unsigned int level, GameControl *ctrl)
+{
+    const GameResources *res = ctrl->res;
+    GameShowObjects *gso = ctrl->gso;
+
     ctrl->previousTime = SDL_GetTicks();
 
     ctrl->hostagesInHelico = 0;
-    ctrl->mvt.x = 0;
-    ctrl->mvt.y = 0;
 
     ctrl->helicoSpeed = 6;
     ctrl->hostagesSpeed = 1;
@@ -22,19 +49,11 @@ void initGame(GameControl* ctrl)
     ctrl->win = 0;
 
     ///Interface
-    ctrl->gso->interface_lifeCount = updateCounter(NULL, ctrl->res->font, "Vies : %d", ctrl->lifeCount);
+    ctrl->gso->interface_lifeCount = updateCounter(ctrl->gso->interface_lifeCount, ctrl->res->font, "Vies : %d", ctrl->lifeCount);
+    ctrl->gso->interface_levelCount = updateCounter(ctrl->gso->interface_levelCount, ctrl->res->font, "Niveau : %d", level);
     SDL_Color annonce_color = {255,255,255};
-    ctrl->gso->interface_winloose = updateAnnonce(NULL, ctrl->res->font, "", annonce_color);
-}
+    ctrl->gso->interface_winloose = updateAnnonce(ctrl->gso->interface_winloose, ctrl->res->font, "", annonce_color);
 
-
-void loadLevel(unsigned int level, GameControl *ctrl)
-{
-    const GameResources *res = ctrl->res;
-    GameShowObjects *gso = ctrl->gso;
-
-    initGame(ctrl);
-    ctrl->gso->interface_levelCount = updateCounter(NULL, ctrl->res->font, "Niveau : %d",level);
     ///Niveau 1
     if(level == 1)
     {
@@ -88,16 +107,16 @@ void loadLevel(unsigned int level, GameControl *ctrl)
         ctrl->minimumHostagesFreeGoal = 25;
 
         ///Interface
-        gso->interface_hostagesInHelico = updateCounter(NULL, res->font, "Otages dans l'helico : %d/16", ctrl->hostagesInHelico);
-        gso->interface_hostagesWaiting = updateCounter(NULL, res->font, "Otages a sauver : %d", gso->hostagesNb);
-        gso->interface_hostagesFree = updateCounter2(NULL, res->font, "Otages libres : %d/%d", gso->baseHostagesNb, ctrl->minimumHostagesFreeGoal);
+        gso->interface_hostagesInHelico = updateCounter(gso->interface_hostagesInHelico, res->font, "Otages dans l'helico : %d/16", ctrl->hostagesInHelico);
+        gso->interface_hostagesWaiting = updateCounter(gso->interface_hostagesWaiting, res->font, "Otages a sauver : %d", gso->hostagesNb);
+        gso->interface_hostagesFree = updateCounter2(gso->interface_hostagesFree, res->font, "Otages libres : %d/%d", gso->baseHostagesNb, ctrl->minimumHostagesFreeGoal);
 
         ///Audio
         audioPlayBackgroundMusic(res->audio, res->bgMusic3);
     }
 
-        ///Niveau 2
-    if(level == 2)
+    ///Niveau 2
+    else if(level == 2)
     {
         gso->buildingsNb = 3;
         gso->buildingHostagesNb = gso->buildingsNb*16;
@@ -157,8 +176,8 @@ void loadLevel(unsigned int level, GameControl *ctrl)
         audioPlayBackgroundMusic(res->audio, res->bgMusic3);
     }
 
-        ///Niveau 3
-    if(level == 3)
+    ///Niveau 3
+    else if(level == 3)
     {
         gso->buildingsNb = 3;
         gso->buildingHostagesNb = gso->buildingsNb*16;
@@ -345,15 +364,14 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                 ///Les otages descendent
                 for(int k = 0; k < ctrl->hostagesInHelico; ++k, ++ctrl->gso->baseHostagesNb)
                 {
-                    ctrl->gso->baseHostages[ctrl->gso->baseHostagesNb] = ctrl->res->hostage;
-                    ctrl->gso->baseHostagesPosition[ctrl->gso->baseHostagesNb].x = ctrl->gso->basePosition.x + ctrl->res->hostage->h*(ctrl->gso->baseHostagesNb%(ctrl->gso->base->w/ctrl->res->hostage->h));
-                    ctrl->gso->baseHostagesPosition[ctrl->gso->baseHostagesNb].y = ctrl->res->hostage->h*(-((ctrl->gso->baseHostagesNb/(ctrl->gso->base->w/ctrl->res->hostage->h)) + 1));
-
-                    ctrl->gso->interface_hostagesFree = updateCounter2(ctrl->gso->interface_hostagesFree, ctrl->res->font, "Otages libres : %d/%d", ctrl->gso->baseHostagesNb, ctrl->minimumHostagesFreeGoal);
+                    ctrl->gso->baseHostages[ctrl->gso->baseHostagesNb] = ctrl->res->hostageL;
+                    ctrl->gso->baseHostagesPosition[ctrl->gso->baseHostagesNb].x = ctrl->gso->basePosition.x + ctrl->res->hostageL->h*(ctrl->gso->baseHostagesNb%(ctrl->gso->base->w/ctrl->res->hostageL->h));
+                    ctrl->gso->baseHostagesPosition[ctrl->gso->baseHostagesNb].y = ctrl->res->hostageL->h*(-((ctrl->gso->baseHostagesNb/(ctrl->gso->base->w/ctrl->res->hostageL->h)) + 1));
                 }
 
                 ctrl->hostagesInHelico = 0;
 
+                ctrl->gso->interface_hostagesFree = updateCounter2(ctrl->gso->interface_hostagesFree, ctrl->res->font, "Otages libres : %d/%d", ctrl->gso->baseHostagesNb, ctrl->minimumHostagesFreeGoal);
                 ctrl->gso->interface_hostagesInHelico = updateCounter(ctrl->gso->interface_hostagesInHelico, ctrl->res->font, "Otages dans l'helico : %d/16", ctrl->hostagesInHelico);
             }
             ///Si l'hélico s'est posé en terrain ennemi
@@ -362,12 +380,25 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                 ///Les otages se rapprochent de l'hélico
                 for(int i = 0; i < ctrl->gso->hostagesNb; ++i)
                 {
-                    ctrl->gso->hostagesPosition[i].x += (ctrl->gso->hostagesPosition[i].x < helicoRealPosition_x ? +1 : -1)*ctrl->hostagesSpeed;//TODO CONST
+                    ///Si l'otage est à gauche de l'hélico
+                    if(ctrl->gso->hostagesPosition[i].x < helicoRealPosition_x)
+                    {
+                        ///Il va à droite
+                        ctrl->gso->hostages[i] = ctrl->res->hostageR;
+                        ctrl->gso->hostagesPosition[i].x += ctrl->hostagesSpeed;
+                    }
+                    ///Si l'otage est à droite de l'hélico
+                    else if(ctrl->gso->hostagesPosition[i].x > helicoRealPosition_x)
+                    {
+                        ///Il va à gauche
+                        ctrl->gso->hostages[i] = ctrl->res->hostageL;
+                        ctrl->gso->hostagesPosition[i].x -= ctrl->hostagesSpeed;
+                    }
 
                     ///S'il y a suffisamment de place et que l'otage est proche de l'hélico
                     if(ctrl->hostagesInHelico < 16 //TODO CONST
-                       && ctrl->gso->hostagesPosition[i].x > helicoRealPosition_x - 10 //TODO CONST
-                       && ctrl->gso->hostagesPosition[i].x < helicoRealPosition_x + 10)//TODO CONST
+                       && ctrl->gso->hostagesPosition[i].x + ctrl->gso->hostages[i]->h/2 > helicoRealPosition_x - ctrl->gso->helico->w/2 - 10 //TODO CONST
+                       && ctrl->gso->hostagesPosition[i].x + ctrl->gso->hostages[i]->h/2 < helicoRealPosition_x + ctrl->gso->helico->w/2 + 10)//TODO CONST
                     {
                         ///L'otage monte dans l'hélico
                         memmove(ctrl->gso->hostages + i, ctrl->gso->hostages + i + 1, (ctrl->gso->hostagesNb - i - 1)*sizeof(SDL_Surface*));
@@ -405,9 +436,9 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                         ///Les otages sortent
                         for(int k = 0; k < ctrl->gso->buildingHostages[j]; ++k)
                         {
-                            ctrl->gso->hostages[ctrl->gso->hostagesNb + k] = ctrl->res->hostage;
-                            ctrl->gso->hostagesPosition[ctrl->gso->hostagesNb + k].x = ctrl->gso->buildingsPosition[j].x + k*ctrl->res->hostage->h + 5;
-                            ctrl->gso->hostagesPosition[ctrl->gso->hostagesNb + k].y = -ctrl->res->hostage->h;
+                            ctrl->gso->hostages[ctrl->gso->hostagesNb + k] = ctrl->res->hostageL;
+                            ctrl->gso->hostagesPosition[ctrl->gso->hostagesNb + k].x = ctrl->gso->buildingsPosition[j].x + k*ctrl->res->hostageL->h + 5;
+                            ctrl->gso->hostagesPosition[ctrl->gso->hostagesNb + k].y = -ctrl->res->hostageL->h;
                         }
 
                         ctrl->gso->hostagesNb += ctrl->gso->buildingHostages[j];
@@ -480,7 +511,8 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
             }
         }
 
-        calculateCollisions(ctrl);
+        calculateBulletsCollisions(ctrl);
+        calculateBombsCollisions(ctrl);
 
         if(ctrl->hostagesInHelico == 0 && ctrl->gso->buildingHostagesNb == 0 && ctrl->gso->hostagesNb == 0)
         {
@@ -517,7 +549,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
     return event;
 }
 
-void calculateCollisions(GameControl *ctrl)
+void calculateBulletsCollisions(GameControl *ctrl)
 {
     SDL_Rect helicoRect =
     {
@@ -579,7 +611,48 @@ void calculateCollisions(GameControl *ctrl)
                 --i;
             }
         }
+
+        ///Pour chaque otage
+        for(int j = 0; j < ctrl->gso->hostagesNb; ++j)
+        {
+            SDL_Rect ennemyRect =
+            {
+                ctrl->gso->hostagesPosition[j].x,
+                ctrl->gso->hostagesPosition[j].y,
+                ctrl->gso->hostages[j]->w,
+                ctrl->gso->hostages[j]->h
+            };
+
+            ///Si collision avec un otage
+            if(intersect(&ennemyRect, &bulletRect))
+            {
+                ///Il est détruit !
+                memmove(ctrl->gso->hostages + j, ctrl->gso->hostages + j + 1, (ctrl->gso->hostagesNb - j - 1)*sizeof(SDL_Surface*));
+                memmove(ctrl->gso->hostagesPosition + j, ctrl->gso->hostagesPosition + j + 1, (ctrl->gso->hostagesNb - j - 1)*sizeof(SDL_Rect));
+                --ctrl->gso->hostagesNb;
+                --j;
+
+                ctrl->gso->interface_hostagesWaiting = updateCounter(ctrl->gso->interface_hostagesWaiting, ctrl->res->font, "Otages a sauver : %d", ctrl->gso->hostagesNb);
+
+                ///Exploser la bullet
+                memmove(ctrl->gso->bullets + i, ctrl->gso->bullets + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Surface*));
+                memmove(ctrl->gso->bulletsPosition + i, ctrl->gso->bulletsPosition + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Rect));
+                --ctrl->gso->bulletsNb;
+                --i;
+            }
+        }
     }
+}
+
+void calculateBombsCollisions(GameControl* ctrl)
+{
+    SDL_Rect helicoRect =
+    {
+        -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x,
+        ctrl->gso->helicoPosition.y,
+        ctrl->gso->helico->w,
+        ctrl->gso->helico->h
+    };
 
     ///Pour chaque bombe
     for(int i = 0; i < ctrl->gso->bombsNb; ++i)
@@ -624,13 +697,43 @@ void calculateCollisions(GameControl *ctrl)
                 memmove(ctrl->gso->ennemies + j, ctrl->gso->ennemies + j + 1, (ctrl->gso->ennemiesNb - j - 1)*sizeof(SDL_Surface*));
                 memmove(ctrl->gso->ennemiesPosition + j, ctrl->gso->ennemiesPosition + j + 1, (ctrl->gso->ennemiesNb - j - 1)*sizeof(SDL_Rect));
                 --ctrl->gso->ennemiesNb;
-                --j;
 
-                ///Exploser la bullet
+                ///Exploser la bombe
                 memmove(ctrl->gso->bombs + i, ctrl->gso->bombs + i + 1, (ctrl->gso->bombsNb - i - 1)*sizeof(SDL_Surface*));
                 memmove(ctrl->gso->bombsPosition + i, ctrl->gso->bombsPosition + i + 1, (ctrl->gso->bombsNb - i - 1)*sizeof(SDL_Rect));
                 --ctrl->gso->bombsNb;
-                --i;
+
+                return;
+            }
+        }
+
+        ///Pour chaque otage
+        for(int j = 0; j < ctrl->gso->hostagesNb; ++j)
+        {
+            SDL_Rect hostageRect =
+            {
+                ctrl->gso->hostagesPosition[j].x,
+                ctrl->gso->hostagesPosition[j].y,
+                ctrl->gso->hostages[j]->h,
+                ctrl->gso->hostages[j]->h
+            };
+
+            ///Si collision avec un otage
+            if(intersect(&hostageRect, &bombRect))
+            {
+                ///Il est détruit !
+                memmove(ctrl->gso->hostages + j, ctrl->gso->hostages + j + 1, (ctrl->gso->hostagesNb - j - 1)*sizeof(SDL_Surface*));
+                memmove(ctrl->gso->hostagesPosition + j, ctrl->gso->hostagesPosition + j + 1, (ctrl->gso->hostagesNb - j - 1)*sizeof(SDL_Rect));
+                --ctrl->gso->hostagesNb;
+
+                ctrl->gso->interface_hostagesWaiting = updateCounter(ctrl->gso->interface_hostagesWaiting, ctrl->res->font, "Otages a sauver : %d", ctrl->gso->hostagesNb);
+
+                ///Exploser la bombe
+                memmove(ctrl->gso->bombs + i, ctrl->gso->bombs + i + 1, (ctrl->gso->bombsNb - i - 1)*sizeof(SDL_Surface*));
+                memmove(ctrl->gso->bombsPosition + i, ctrl->gso->bombsPosition + i + 1, (ctrl->gso->bombsNb - i - 1)*sizeof(SDL_Rect));
+                --ctrl->gso->bombsNb;
+
+                return;
             }
         }
     }
