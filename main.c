@@ -83,8 +83,7 @@ int main(int argc, char* argv[])
 int game(int level,GameControl* ctrl,SDL_Surface* ecran)
 {
     ///Chargement du niveau
-    loadLevel(level, ctrl);
-
+    loadLevel(ctrl, level);
 
     ///Début du jeu
     int running = 1;
@@ -155,11 +154,17 @@ int game(int level,GameControl* ctrl,SDL_Surface* ecran)
             else
             {
                 processEventsPaused(ctrl, eventptr);
+
                 if(eventptr)
                 {
                     switch(eventptr->type)
                     {
                         case SDL_KEYDOWN:
+                            if(eventptr->key.keysym.sym == SDLK_ESCAPE)
+                            {
+                                return 0;
+                            }
+
                             running = 0;
                             break;
                         default:

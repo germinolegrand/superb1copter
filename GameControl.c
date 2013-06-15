@@ -28,7 +28,7 @@ void quitGame(GameControl* ctrl)
 }
 
 
-void loadLevel(unsigned int level, GameControl *ctrl)
+void loadLevel(GameControl *ctrl, unsigned int level)
 {
     const GameResources *res = ctrl->res;
     GameShowObjects *gso = ctrl->gso;
@@ -46,6 +46,7 @@ void loadLevel(unsigned int level, GameControl *ctrl)
     ctrl->tanksNextShot = ctrl->previousTime + ctrl->tanksShotInterval;
 
     ctrl->lifeCount = 3;
+    ctrl->level = level;
     ctrl->win = 0;
 
     ///Interface
@@ -86,16 +87,6 @@ void loadLevel(unsigned int level, GameControl *ctrl)
         gso->bombsNb = 0;
 
         gso->bulletsNb = 0;
-
-        gso->ennemiesNb = 2;
-
-        gso->ennemies[0] = res->tankL;
-        gso->ennemiesPosition[0].x = 3000;
-        gso->ennemiesPosition[0].y = -gso->ennemies[0]->h;
-
-        gso->ennemies[1] = res->tankL;
-        gso->ennemiesPosition[1].x = 2000;
-        gso->ennemiesPosition[1].y = -gso->ennemies[1]->h;
 
         gso->hostagesNb = 0;
 
@@ -148,16 +139,6 @@ void loadLevel(unsigned int level, GameControl *ctrl)
 
         gso->bulletsNb = 0;
 
-        gso->ennemiesNb = 2;
-
-        gso->ennemies[0] = res->tankL;
-        gso->ennemiesPosition[0].x = 3000;
-        gso->ennemiesPosition[0].y = -gso->ennemies[0]->h;
-
-        gso->ennemies[1] = res->tankL;
-        gso->ennemiesPosition[1].x = 2000;
-        gso->ennemiesPosition[1].y = -gso->ennemies[1]->h;
-
         gso->hostagesNb = 0;
 
         gso->baseHostagesNb = 0;
@@ -209,16 +190,6 @@ void loadLevel(unsigned int level, GameControl *ctrl)
 
         gso->bulletsNb = 0;
 
-        gso->ennemiesNb = 2;
-
-        gso->ennemies[0] = res->tankL;
-        gso->ennemiesPosition[0].x = 3000;
-        gso->ennemiesPosition[0].y = -gso->ennemies[0]->h;
-
-        gso->ennemies[1] = res->tankL;
-        gso->ennemiesPosition[1].x = 2000;
-        gso->ennemiesPosition[1].y = -gso->ennemies[1]->h;
-
         gso->hostagesNb = 0;
 
         gso->baseHostagesNb = 0;
@@ -237,10 +208,54 @@ void loadLevel(unsigned int level, GameControl *ctrl)
         audioPlayBackgroundMusic(res->audio, res->bgMusic3);
     }
 
-
-
-
+    ///On fait apparaître les ennemis
+    gso->ennemiesNb = 0;
+    spawnEnnemies(ctrl);
 }
+
+void spawnEnnemies(GameControl* ctrl)
+{
+    const GameResources *res = ctrl->res;
+    GameShowObjects *gso = ctrl->gso;
+
+    if(ctrl->level == 1)
+    {
+        gso->ennemies[gso->ennemiesNb] = res->tankL;
+        gso->ennemiesPosition[gso->ennemiesNb].x = 3000;
+        gso->ennemiesPosition[gso->ennemiesNb].y = -gso->ennemies[0]->h;
+        ++gso->ennemiesNb;
+
+        gso->ennemies[gso->ennemiesNb] = res->tankL;
+        gso->ennemiesPosition[gso->ennemiesNb].x = 2000;
+        gso->ennemiesPosition[gso->ennemiesNb].y = -gso->ennemies[1]->h;
+        ++gso->ennemiesNb;
+    }
+    else if(ctrl->level == 2)
+    {
+        gso->ennemies[gso->ennemiesNb] = res->tankL;
+        gso->ennemiesPosition[gso->ennemiesNb].x = 3000;
+        gso->ennemiesPosition[gso->ennemiesNb].y = -gso->ennemies[0]->h;
+        ++gso->ennemiesNb;
+
+        gso->ennemies[gso->ennemiesNb] = res->tankL;
+        gso->ennemiesPosition[gso->ennemiesNb].x = 2000;
+        gso->ennemiesPosition[gso->ennemiesNb].y = -gso->ennemies[1]->h;
+        ++gso->ennemiesNb;
+    }
+    else if(ctrl->level == 3)
+    {
+        gso->ennemies[gso->ennemiesNb] = res->tankL;
+        gso->ennemiesPosition[gso->ennemiesNb].x = 3000;
+        gso->ennemiesPosition[gso->ennemiesNb].y = -gso->ennemies[0]->h;
+        ++gso->ennemiesNb;
+
+        gso->ennemies[gso->ennemiesNb] = res->tankL;
+        gso->ennemiesPosition[gso->ennemiesNb].x = 2000;
+        gso->ennemiesPosition[gso->ennemiesNb].y = -gso->ennemies[1]->h;
+        ++gso->ennemiesNb;
+    }
+}
+
 
 SDL_Event* processEventsPaused(GameControl *ctrl, SDL_Event *event)
 {
@@ -369,6 +384,13 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                     ctrl->gso->baseHostagesPosition[ctrl->gso->baseHostagesNb].y = ctrl->res->hostageL->h*(-((ctrl->gso->baseHostagesNb/(ctrl->gso->base->w/ctrl->res->hostageL->h)) + 1));
                 }
 
+                ///Si on a déposé au moins un otage
+                if(ctrl->hostagesInHelico > 0)
+                {
+                    ///alors on respawn des ennemis
+                    spawnEnnemies(ctrl);
+                }
+
                 ctrl->hostagesInHelico = 0;
 
                 ctrl->gso->interface_hostagesFree = updateCounter2(ctrl->gso->interface_hostagesFree, ctrl->res->font, "Otages libres : %d/%d", ctrl->gso->baseHostagesNb, ctrl->minimumHostagesFreeGoal);
@@ -470,7 +492,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                 memmove(ctrl->gso->bulletsPosition + i, ctrl->gso->bulletsPosition + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Rect));
                 memmove(ctrl->gso->bulletsMovement + i, ctrl->gso->bulletsMovement + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Rect));
                 --ctrl->gso->bulletsNb;
-                --i;
+                i > 0 ? --i : 0;
             }
         }
 
@@ -560,7 +582,7 @@ void calculateBulletsCollisions(GameControl *ctrl)
     };
 
     ///Pour chaque bullet
-    for(int i = 0; i < ctrl->gso->bulletsNb; ++i)
+    for(int i = 0, collision = 0; i < ctrl->gso->bulletsNb; collision ? collision = 0 : ++i)
     {
         SDL_Rect bulletRect =
         {
@@ -579,13 +601,12 @@ void calculateBulletsCollisions(GameControl *ctrl)
             memmove(ctrl->gso->bullets + i, ctrl->gso->bullets + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Surface*));
             memmove(ctrl->gso->bulletsPosition + i, ctrl->gso->bulletsPosition + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Rect));
             --ctrl->gso->bulletsNb;
-            --i;
 
-            return;
+            collision = 1;
         }
 
         ///Pour chaque ennemi
-        for(int j = 0; j < ctrl->gso->ennemiesNb; ++j)
+        for(int j = 0; !collision && j < ctrl->gso->ennemiesNb; ++j)
         {
             SDL_Rect ennemyRect =
             {
@@ -608,12 +629,13 @@ void calculateBulletsCollisions(GameControl *ctrl)
                 memmove(ctrl->gso->bullets + i, ctrl->gso->bullets + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Surface*));
                 memmove(ctrl->gso->bulletsPosition + i, ctrl->gso->bulletsPosition + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Rect));
                 --ctrl->gso->bulletsNb;
-                --i;
+
+                collision = 1;
             }
         }
 
         ///Pour chaque otage
-        for(int j = 0; j < ctrl->gso->hostagesNb; ++j)
+        for(int j = 0; !collision && j < ctrl->gso->hostagesNb; ++j)
         {
             SDL_Rect ennemyRect =
             {
@@ -638,7 +660,8 @@ void calculateBulletsCollisions(GameControl *ctrl)
                 memmove(ctrl->gso->bullets + i, ctrl->gso->bullets + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Surface*));
                 memmove(ctrl->gso->bulletsPosition + i, ctrl->gso->bulletsPosition + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Rect));
                 --ctrl->gso->bulletsNb;
-                --i;
+
+                collision = 1;
             }
         }
     }
@@ -655,7 +678,7 @@ void calculateBombsCollisions(GameControl* ctrl)
     };
 
     ///Pour chaque bombe
-    for(int i = 0; i < ctrl->gso->bombsNb; ++i)
+    for(int i = 0, collision = 0; i < ctrl->gso->bombsNb; collision ? collision = 0 : ++i)
     {
         SDL_Rect bombRect =
         {
@@ -674,13 +697,12 @@ void calculateBombsCollisions(GameControl* ctrl)
             memmove(ctrl->gso->bombs + i, ctrl->gso->bombs + i + 1, (ctrl->gso->bombsNb - i - 1)*sizeof(SDL_Surface*));
             memmove(ctrl->gso->bombsPosition + i, ctrl->gso->bombsPosition + i + 1, (ctrl->gso->bombsNb - i - 1)*sizeof(SDL_Rect));
             --ctrl->gso->bombsNb;
-            --i;
 
-            return;
+            collision = 1;
         }
 
         ///Pour chaque ennemi
-        for(int j = 0; j < ctrl->gso->ennemiesNb; ++j)
+        for(int j = 0; !collision && j < ctrl->gso->ennemiesNb; ++j)
         {
             SDL_Rect ennemyRect =
             {
@@ -703,12 +725,12 @@ void calculateBombsCollisions(GameControl* ctrl)
                 memmove(ctrl->gso->bombsPosition + i, ctrl->gso->bombsPosition + i + 1, (ctrl->gso->bombsNb - i - 1)*sizeof(SDL_Rect));
                 --ctrl->gso->bombsNb;
 
-                return;
+                collision = 1;
             }
         }
 
         ///Pour chaque otage
-        for(int j = 0; j < ctrl->gso->hostagesNb; ++j)
+        for(int j = 0; !collision && j < ctrl->gso->hostagesNb; ++j)
         {
             SDL_Rect hostageRect =
             {
@@ -733,7 +755,7 @@ void calculateBombsCollisions(GameControl* ctrl)
                 memmove(ctrl->gso->bombsPosition + i, ctrl->gso->bombsPosition + i + 1, (ctrl->gso->bombsNb - i - 1)*sizeof(SDL_Rect));
                 --ctrl->gso->bombsNb;
 
-                return;
+                collision = 1;
             }
         }
     }
@@ -756,12 +778,12 @@ void looselife(GameControl *ctrl)
 
     if(ctrl->lifeCount == 2)
     {
-                ///Audio
+        ///Audio
         audioPlayBackgroundMusic(ctrl->res->audio, ctrl->res->bgMusic2);
     }
     else if(ctrl->lifeCount == 1)
     {
-                ///Audio
+        ///Audio
         audioPlayBackgroundMusic(ctrl->res->audio, ctrl->res->bgMusic1);
     }
     else if(ctrl->lifeCount == 0) /// On perd !
@@ -770,7 +792,7 @@ void looselife(GameControl *ctrl)
         audioPlayBackgroundMusic(ctrl->res->audio, ctrl->res->loose);
         SDL_Color annonce_color = {255,0,0};
         ctrl->gso->interface_winloose = updateAnnonce(ctrl->gso->interface_winloose, ctrl->res->font, "Vous avez perdu !", annonce_color);
-        ctrl->win=-1;
+        ctrl->win = -1;
     }
 }
 
