@@ -48,6 +48,8 @@ struct GameShowObjects
 
     SDL_Rect backgroundPosition;
 
+    SDL_Surface *background;
+
     ///Interface
     SDL_Surface *interface_hostagesInHelico;
     SDL_Surface *interface_hostagesWaiting;

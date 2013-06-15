@@ -92,6 +92,9 @@ int game(int level,GameControl* ctrl,SDL_Surface* ecran)
     unsigned int pausedTime = 0;
     unsigned int pauseBegin = 0;
 
+    unsigned int fps_timer = SDL_GetTicks();
+    unsigned int fps_timer_offset = 33;// = 1000/30 => 30 FPS
+
     ///Boucle principale
     while(running)
     {
@@ -174,12 +177,18 @@ int game(int level,GameControl* ctrl,SDL_Surface* ecran)
             }
         }
 
-        ///Affichage du jeu
-        SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
+        if(SDL_GetTicks() >= fps_timer + fps_timer_offset)
+        {
+            fps_timer += fps_timer_offset;
 
-        showGame(ecran, ctrl->gso, SDL_GetTicks());
+            ///Affichage du jeu
+            SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
 
-        SDL_Flip(ecran);
+            showGame(ecran, ctrl->gso, SDL_GetTicks());
+
+            SDL_Flip(ecran);
+
+        }
     }
 
     return ctrl->win == 1;

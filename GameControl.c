@@ -58,6 +58,8 @@ void loadLevel(GameControl *ctrl, unsigned int level)
     else
         ++ctrl->lifeCount;
 
+    gso->background = res->background;
+
     ///Interface
     ctrl->gso->interface_lifeCount = updateCounter(ctrl->gso->interface_lifeCount, ctrl->res->font, "Vies : %d", ctrl->lifeCount);
     ctrl->gso->interface_levelCount = updateCounter(ctrl->gso->interface_levelCount, ctrl->res->font, "Niveau : %d", level);

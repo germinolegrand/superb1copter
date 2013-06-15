@@ -2,6 +2,13 @@
 
 void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime)
 {
+    ///background
+    {
+        SDL_Rect backgroundRect = {0,0,0,0};
+
+        SDL_BlitSurface(gso->background, NULL, ecran, &backgroundRect);
+    }
+
     ///bâtiments
     for(unsigned int i = 0; i < gso->buildingsNb; ++i)
     {

@@ -34,7 +34,7 @@ void loadResources(GameResources *res)
     res->planeR = SDL_LoadBMP("Ressources/Images/planeR.bmp");
     res->saucer = SDL_LoadBMP("Ressources/Images/saucer.bmp");
 
-    //res->background = SDL_LoadBMP("Ressources/Images/background.bmp");
+    res->background = SDL_LoadBMP("Ressources/Images/background_level1.bmp");
 
     ///transparence des images
     SDL_SetColorKey(res->helicoL,    SDL_SRCCOLORKEY, SDL_MapRGB(res->helicoL->format,    255, 0, 255));
@@ -53,7 +53,7 @@ void loadResources(GameResources *res)
     SDL_SetColorKey(res->planeL,     SDL_SRCCOLORKEY, SDL_MapRGB(res->planeL->format,     255, 0, 255));
     SDL_SetColorKey(res->planeR,     SDL_SRCCOLORKEY, SDL_MapRGB(res->planeR->format,     255, 0, 255));
     SDL_SetColorKey(res->saucer,     SDL_SRCCOLORKEY, SDL_MapRGB(res->saucer->format,     255, 0, 255));
-    //SDL_SetColorKey(res->background, SDL_SRCCOLORKEY, SDL_MapRGB(res->background->format, 255, 0, 255));
+    SDL_SetColorKey(res->background, SDL_SRCCOLORKEY, SDL_MapRGB(res->background->format, 255, 0, 255));
 }
 
 void freeResources(GameResources *res)
@@ -75,7 +75,7 @@ void freeResources(GameResources *res)
     SDL_FreeSurface(res->planeL);
     SDL_FreeSurface(res->planeR);
     SDL_FreeSurface(res->saucer);
-    //SDL_FreeSurface(res->background);
+    SDL_FreeSurface(res->background);
 
     ///polices
     TTF_CloseFont(res->font);
