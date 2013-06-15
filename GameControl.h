@@ -19,10 +19,15 @@ struct GameControl
     float helicoSpeed,
           hostagesSpeed,
           bulletsSpeed,
-          tanksSpeed;
+          tanksSpeed,
+          planesSpeed,
+          saucerSpeed;
 
     int tanksShotInterval;
     int tanksNextShot;
+
+    int planesShotInterval;
+    int planesNextShot;
 
     unsigned int hostagesInHelico;
 

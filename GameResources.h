@@ -29,10 +29,15 @@ struct GameResources
                 *buildingD,
                 *bomb,
                 *bullet,
+                *missileL,
+                *missileR,
                 *hostageL,
                 *hostageR,
                 *tankL,
                 *tankR,
+                *planeL,
+                *planeR,
+                *saucer,
                 *background;
 };
 

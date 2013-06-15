@@ -41,13 +41,22 @@ void loadLevel(GameControl *ctrl, unsigned int level)
     ctrl->hostagesSpeed = 1;
     ctrl->bulletsSpeed = 9;
     ctrl->tanksSpeed = 1;
+    ctrl->planesSpeed = 2.f;
+    ctrl->saucerSpeed = 1.5f;
 
     ctrl->tanksShotInterval = 1000;
     ctrl->tanksNextShot = ctrl->previousTime + ctrl->tanksShotInterval;
 
-    ctrl->lifeCount = 3;
+    ctrl->planesShotInterval = 1000;
+    ctrl->planesNextShot = ctrl->previousTime + ctrl->planesShotInterval;
+
     ctrl->level = level;
     ctrl->win = 0;
+
+    if(level == 1)///Cas particulier : le joueur a 3 vies pour commencer
+        ctrl->lifeCount = 3;
+    else
+        ++ctrl->lifeCount;
 
     ///Interface
     ctrl->gso->interface_lifeCount = updateCounter(ctrl->gso->interface_lifeCount, ctrl->res->font, "Vies : %d", ctrl->lifeCount);
@@ -232,9 +241,9 @@ void spawnEnnemies(GameControl* ctrl)
     }
     else if(ctrl->level == 2)
     {
-        gso->ennemies[gso->ennemiesNb] = res->tankL;
+        gso->ennemies[gso->ennemiesNb] = res->planeL;
         gso->ennemiesPosition[gso->ennemiesNb].x = 3000;
-        gso->ennemiesPosition[gso->ennemiesNb].y = -gso->ennemies[0]->h;
+        gso->ennemiesPosition[gso->ennemiesNb].y = -300;
         ++gso->ennemiesNb;
 
         gso->ennemies[gso->ennemiesNb] = res->tankL;
@@ -244,9 +253,14 @@ void spawnEnnemies(GameControl* ctrl)
     }
     else if(ctrl->level == 3)
     {
-        gso->ennemies[gso->ennemiesNb] = res->tankL;
+        gso->ennemies[gso->ennemiesNb] = res->saucer;
+        gso->ennemiesPosition[gso->ennemiesNb].x = 2500;
+        gso->ennemiesPosition[gso->ennemiesNb].y = -100;
+        ++gso->ennemiesNb;
+
+        gso->ennemies[gso->ennemiesNb] = res->planeL;
         gso->ennemiesPosition[gso->ennemiesNb].x = 3000;
-        gso->ennemiesPosition[gso->ennemiesNb].y = -gso->ennemies[0]->h;
+        gso->ennemiesPosition[gso->ennemiesNb].y = -300;
         ++gso->ennemiesNb;
 
         gso->ennemies[gso->ennemiesNb] = res->tankL;
@@ -524,11 +538,79 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                         ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].x = ctrl->gso->ennemiesPosition[i].x + (ctrl->gso->ennemies[i] == ctrl->res->tankR)*ctrl->gso->ennemies[i]->w + (ctrl->gso->ennemies[i] == ctrl->res->tankL ? -1 : 0)*ctrl->gso->bullets[ctrl->gso->bulletsNb]->w;
                         ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].y = -ctrl->gso->ennemies[i]->h;
 
-                        ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].x = (ctrl->gso->ennemies[i] == ctrl->res->tankL ? -1 : 1)*1.f;
+                        ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].x = (ctrl->gso->ennemies[i] == ctrl->res->tankL ? -1 : 1)*1.f;//TODO CONST
                         ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].y = 0.5f;
 
                         ++ctrl->gso->bulletsNb;
                     }
+                }
+            }
+            ///Si c'est un avion
+            else if(ctrl->gso->ennemies[i] == ctrl->res->planeL
+                 || ctrl->gso->ennemies[i] == ctrl->res->planeR)
+            {
+                int plane_helico_position_difference = ctrl->gso->ennemiesPosition[i].x - helicoRealPosition_x;
+
+                if(abs(plane_helico_position_difference) > 400)
+                {
+                    ctrl->gso->ennemies[i] = plane_helico_position_difference > 0 ? ctrl->res->planeL : ctrl->res->planeR;
+                }
+
+                ctrl->gso->ennemiesPosition[i].x += (ctrl->gso->ennemies[i] == ctrl->res->planeR ? +1 : -1)*ctrl->planesSpeed;
+
+                ///Si l'avion est assez proche de l'hélico
+                if(abs(plane_helico_position_difference) < 500 && ctrl->gso->helicoPosition.y < 100)//TODO CONST
+                {
+                    if(currentTime > ctrl->planesNextShot)
+                    {
+                        ctrl->planesNextShot = currentTime + ctrl->planesShotInterval;
+
+                        ctrl->gso->bullets[ctrl->gso->bulletsNb] = ctrl->gso->ennemies[i] == ctrl->res->planeL ? ctrl->res->missileL : ctrl->res->missileR;
+                        ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].x = ctrl->gso->ennemiesPosition[i].x + ctrl->gso->ennemies[i]->w/2 + ctrl->gso->bullets[ctrl->gso->bulletsNb]->w/2;
+                        ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].y = ctrl->gso->ennemiesPosition[i].y + ctrl->gso->ennemies[i]->h;
+
+                        ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].x = (ctrl->gso->ennemies[i] == ctrl->res->planeL ? -1 : 1)*2.5f;//TODO CONST
+                        ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].y = 0.f;
+
+                        ++ctrl->gso->bulletsNb;
+                    }
+                }
+            }
+            ///Si c'est un ovni
+            else if(ctrl->gso->ennemies[i] == ctrl->res->saucer)
+            {
+                SDL_Rect helicoRect =
+                {
+                    -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x,
+                    ctrl->gso->helicoPosition.y,
+                    ctrl->gso->helico->w,
+                    ctrl->gso->helico->h
+                };
+
+                SDL_Rect saucerRect =
+                {
+                    ctrl->gso->ennemiesPosition[i].x,
+                    ctrl->gso->ennemiesPosition[i].y,
+                    ctrl->gso->ennemies[i]->w,
+                    ctrl->gso->ennemies[i]->h
+                };
+
+                int saucer_helico_position_difference_x = ctrl->gso->ennemiesPosition[i].x - helicoRealPosition_x;
+                int saucer_helico_position_difference_y = ctrl->gso->ennemiesPosition[i].y - ctrl->gso->helicoPosition.y;
+
+                ctrl->gso->ennemiesPosition[i].x += (saucer_helico_position_difference_x > 0 ? -1 : +1)*ctrl->saucerSpeed;
+                ctrl->gso->ennemiesPosition[i].y += (saucer_helico_position_difference_y > 0 ? -1 : +1)*ctrl->saucerSpeed;
+
+                ///Si l'ovni touche l'hélico
+                if(intersect(&helicoRect, &saucerRect))
+                {
+                    ///On perd une vie !
+                    looselife(ctrl);
+                    ///Exploser l'ovni
+                    memmove(ctrl->gso->ennemies + i, ctrl->gso->ennemies + i + 1, (ctrl->gso->ennemiesNb - i - 1)*sizeof(SDL_Surface*));
+                    memmove(ctrl->gso->ennemiesPosition + i, ctrl->gso->ennemiesPosition + i + 1, (ctrl->gso->ennemiesNb - i - 1)*sizeof(SDL_Rect));
+                    --ctrl->gso->ennemiesNb;
+                    --i;
                 }
             }
         }
