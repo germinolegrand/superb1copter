@@ -104,7 +104,7 @@ int game(int level,GameControl* ctrl,SDL_Surface* ecran)
         ///Gestion des évennements
         if(SDL_PollEvent(&event))
         {
-            if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_F4 && event.key.keysym.mod == KMOD_LALT))
+            if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && ((event.key.keysym.sym == SDLK_F4 && event.key.keysym.mod == KMOD_LALT) || event.key.keysym.sym == SDLK_ESCAPE)))
             {
                 ///On arrête le jeu
                 running = 0;

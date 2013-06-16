@@ -435,9 +435,9 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                     }
 
                     ///S'il y a suffisamment de place et que l'otage est proche de l'hélico
-                    if(ctrl->hostagesInHelico < 16 //TODO CONST
-                       && ctrl->gso->hostagesPosition[i].x + ctrl->gso->hostages[i]->h/2 > helicoRealPosition_x - ctrl->gso->helico->w/2 - 10 //TODO CONST
-                       && ctrl->gso->hostagesPosition[i].x + ctrl->gso->hostages[i]->h/2 < helicoRealPosition_x + ctrl->gso->helico->w/2 + 10)//TODO CONST
+                    if(ctrl->hostagesInHelico < 16
+                       && ctrl->gso->hostagesPosition[i].x + ctrl->gso->hostages[i]->h/2 > helicoRealPosition_x - ctrl->gso->helico->w/2 - 10
+                       && ctrl->gso->hostagesPosition[i].x + ctrl->gso->hostages[i]->h/2 < helicoRealPosition_x + ctrl->gso->helico->w/2 + 10)
                     {
                         ///L'otage monte dans l'hélico
                         memmove(ctrl->gso->hostages + i, ctrl->gso->hostages + i + 1, (ctrl->gso->hostagesNb - i - 1)*sizeof(SDL_Surface*));
@@ -455,7 +455,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
         ///Les bombes tombent
         for(int i = 0; i < ctrl->gso->bombsNb; ++i)
         {
-            ctrl->gso->bombsPosition[i].y += ctrl->bombsSpeed;//TODO CONST
+            ctrl->gso->bombsPosition[i].y += ctrl->bombsSpeed;
 
             ///Si la bombe touche le sol
             if(ctrl->gso->bombsPosition[i].y >= 0)
@@ -502,8 +502,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
 
             ///Si les bullets sortent du jeu
             if(ctrl->gso->bulletsPosition[i].y + ctrl->gso->backgroundPosition.y <= 0
-               //TODO c'est buggé
-               || ctrl->gso->bulletsPosition[i].x - helicoRealPosition_x > 500 || ctrl->gso->bulletsPosition[i].x - helicoRealPosition_x < -500)//TODO CONST
+               || ctrl->gso->bulletsPosition[i].x - helicoRealPosition_x > 500 || ctrl->gso->bulletsPosition[i].x - helicoRealPosition_x < -500)
             {
                 memmove(ctrl->gso->bullets + i, ctrl->gso->bullets + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Surface*));
                 memmove(ctrl->gso->bulletsPosition + i, ctrl->gso->bulletsPosition + i + 1, (ctrl->gso->bulletsNb - i - 1)*sizeof(SDL_Rect));
@@ -531,7 +530,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                 }
 
                 ///Si le tank est assez proche de l'hélico
-                if(abs(tank_helico_position_difference) < 300 && ctrl->gso->helicoPosition.y > -300)//TODO CONST
+                if(abs(tank_helico_position_difference) < 300 && ctrl->gso->helicoPosition.y > -300)
                 {
                     if(currentTime > ctrl->tanksNextShot)
                     {
@@ -541,7 +540,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                         ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].x = ctrl->gso->ennemiesPosition[i].x + (ctrl->gso->ennemies[i] == ctrl->res->tankR)*ctrl->gso->ennemies[i]->w + (ctrl->gso->ennemies[i] == ctrl->res->tankL ? -1 : 0)*ctrl->gso->bullets[ctrl->gso->bulletsNb]->w;
                         ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].y = -ctrl->gso->ennemies[i]->h;
 
-                        ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].x = (ctrl->gso->ennemies[i] == ctrl->res->tankL ? -1 : 1)*1.f;//TODO CONST
+                        ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].x = (ctrl->gso->ennemies[i] == ctrl->res->tankL ? -1 : 1)*1.f;
                         ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].y = 0.5f;
 
                         ++ctrl->gso->bulletsNb;
@@ -562,7 +561,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                 ctrl->gso->ennemiesPosition[i].x += (ctrl->gso->ennemies[i] == ctrl->res->planeR ? +1 : -1)*ctrl->planesSpeed;
 
                 ///Si l'avion est assez proche de l'hélico
-                if(abs(plane_helico_position_difference) < 500 && ctrl->gso->helicoPosition.y < 100)//TODO CONST
+                if(abs(plane_helico_position_difference) < 500 && ctrl->gso->helicoPosition.y < 100)
                 {
                     if(currentTime > ctrl->planesNextShot)
                     {
@@ -572,7 +571,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
                         ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].x = ctrl->gso->ennemiesPosition[i].x + ctrl->gso->ennemies[i]->w/2 + ctrl->gso->bullets[ctrl->gso->bulletsNb]->w/2;
                         ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].y = ctrl->gso->ennemiesPosition[i].y + ctrl->gso->ennemies[i]->h;
 
-                        ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].x = (ctrl->gso->ennemies[i] == ctrl->res->planeL ? -1 : 1)*2.5f;//TODO CONST
+                        ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].x = (ctrl->gso->ennemies[i] == ctrl->res->planeL ? -1 : 1)*2.5f;
                         ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].y = 0.f;
 
                         ++ctrl->gso->bulletsNb;
