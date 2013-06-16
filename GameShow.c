@@ -4,7 +4,7 @@ void showGame(SDL_Surface *ecran, GameShowObjects *gso, unsigned int currentTime
 {
     ///background
     {
-        SDL_Rect backgroundRect = {0,0,0,0};
+        SDL_Rect backgroundRect = {0,0,0,0};//gso->backgroundPosition.y - gso->background->h
 
         SDL_BlitSurface(gso->background, NULL, ecran, &backgroundRect);
     }

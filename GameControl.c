@@ -40,6 +40,7 @@ void loadLevel(GameControl *ctrl, unsigned int level)
     ctrl->helicoSpeed = 6;
     ctrl->hostagesSpeed = 1;
     ctrl->bulletsSpeed = 9;
+    ctrl->bombsSpeed = 6.1;
     ctrl->tanksSpeed = 1;
     ctrl->planesSpeed = 2.f;
     ctrl->saucerSpeed = 1.5f;
@@ -58,7 +59,7 @@ void loadLevel(GameControl *ctrl, unsigned int level)
     else
         ++ctrl->lifeCount;
 
-    gso->background = res->background;
+    gso->background = res->background[level - 1];
 
     ///Interface
     ctrl->gso->interface_lifeCount = updateCounter(ctrl->gso->interface_lifeCount, ctrl->res->font, "Vies : %d", ctrl->lifeCount);
@@ -335,14 +336,14 @@ SDL_Event* processEventsNotPaused(GameControl *ctrl, SDL_Event *event)
                     ///L'hélico lache une bombe
                     ctrl->gso->bombs[ctrl->gso->bombsNb] = ctrl->res->bomb;
                     ctrl->gso->bombsPosition[ctrl->gso->bombsNb].x = -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w/2 - ctrl->res->bomb->w/2;
-                    ctrl->gso->bombsPosition[ctrl->gso->bombsNb].y = ctrl->gso->helicoPosition.y + ctrl->gso->helico->h;
+                    ctrl->gso->bombsPosition[ctrl->gso->bombsNb].y = ctrl->gso->helicoPosition.y + ctrl->gso->helico->h + ctrl->gso->bombs[ctrl->gso->bombsNb]->h;
                     ++ctrl->gso->bombsNb;
                 }
                 else if(event->key.keysym.sym == SDLK_z)
                 {
                     ///L'hélico lance une bullet
                     ctrl->gso->bullets[ctrl->gso->bulletsNb] = ctrl->res->bullet;
-                    ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].x = -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w*(ctrl->gso->helico == ctrl->res->helicoR) + ctrl->res->bullet->w*(ctrl->gso->helico == ctrl->res->helicoR);
+                    ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].x = -ctrl->gso->backgroundPosition.x + ctrl->gso->helicoPosition.x + ctrl->gso->helico->w*(ctrl->gso->helico == ctrl->res->helicoR) + ctrl->res->bullet->w*(ctrl->gso->helico == ctrl->res->helicoR ? 1 : -1);
                     ctrl->gso->bulletsPosition[ctrl->gso->bulletsNb].y = ctrl->gso->helicoPosition.y + ctrl->gso->helico->h/2;
 
                     ctrl->gso->bulletsMovement[ctrl->gso->bulletsNb].x = (ctrl->gso->helico == ctrl->res->helicoR) ? +1 : -1;
@@ -454,7 +455,7 @@ SDL_Event* processEvents(GameControl *ctrl, unsigned int currentTime, SDL_Event 
         ///Les bombes tombent
         for(int i = 0; i < ctrl->gso->bombsNb; ++i)
         {
-            ctrl->gso->bombsPosition[i].y += 5;//TODO CONST
+            ctrl->gso->bombsPosition[i].y += ctrl->bombsSpeed;//TODO CONST
 
             ///Si la bombe touche le sol
             if(ctrl->gso->bombsPosition[i].y >= 0)

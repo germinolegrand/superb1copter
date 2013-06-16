@@ -14,7 +14,6 @@ void loadResources(GameResources *res)
     res->font = TTF_OpenFont("Ressources/Fonts/arial.ttf", 20);
 
     ///images
-    res->background = SDL_LoadBMP("Ressources/Images/back.bmp");
     res->helicoL = SDL_LoadBMP("Ressources/Images/copterL.bmp");
     res->helicoR = SDL_LoadBMP("Ressources/Images/copterR.bmp");
     res->base = SDL_LoadBMP("Ressources/Images/Hospital.bmp");
@@ -34,26 +33,30 @@ void loadResources(GameResources *res)
     res->planeR = SDL_LoadBMP("Ressources/Images/planeR.bmp");
     res->saucer = SDL_LoadBMP("Ressources/Images/saucer.bmp");
 
-    res->background = SDL_LoadBMP("Ressources/Images/background_level1.bmp");
+    res->background[0] = SDL_LoadBMP("Ressources/Images/background_level1.bmp");
+    res->background[1] = SDL_LoadBMP("Ressources/Images/background_level2.bmp");
+    res->background[2] = SDL_LoadBMP("Ressources/Images/background_level3.bmp");
 
     ///transparence des images
-    SDL_SetColorKey(res->helicoL,    SDL_SRCCOLORKEY, SDL_MapRGB(res->helicoL->format,    255, 0, 255));
-    SDL_SetColorKey(res->helicoR,    SDL_SRCCOLORKEY, SDL_MapRGB(res->helicoR->format,    255, 0, 255));
-    SDL_SetColorKey(res->base,       SDL_SRCCOLORKEY, SDL_MapRGB(res->base->format,       255, 0, 255));
-    SDL_SetColorKey(res->building,   SDL_SRCCOLORKEY, SDL_MapRGB(res->building->format,   255, 0, 255));
-    SDL_SetColorKey(res->buildingD,  SDL_SRCCOLORKEY, SDL_MapRGB(res->buildingD->format,  255, 0, 255));
-    SDL_SetColorKey(res->bomb,       SDL_SRCCOLORKEY, SDL_MapRGB(res->bomb->format,       255, 0, 255));
-    SDL_SetColorKey(res->bullet,     SDL_SRCCOLORKEY, SDL_MapRGB(res->bullet->format,     255, 0, 255));
-    SDL_SetColorKey(res->missileL,   SDL_SRCCOLORKEY, SDL_MapRGB(res->missileL->format,   255, 0, 255));
-    SDL_SetColorKey(res->missileR,   SDL_SRCCOLORKEY, SDL_MapRGB(res->missileR->format,   255, 0, 255));
-    SDL_SetColorKey(res->hostageL,   SDL_SRCCOLORKEY, SDL_MapRGB(res->hostageL->format,   255, 0, 255));
-    SDL_SetColorKey(res->hostageR,   SDL_SRCCOLORKEY, SDL_MapRGB(res->hostageR->format,   255, 0, 255));
-    SDL_SetColorKey(res->tankL,      SDL_SRCCOLORKEY, SDL_MapRGB(res->tankL->format,      255, 0, 255));
-    SDL_SetColorKey(res->tankR,      SDL_SRCCOLORKEY, SDL_MapRGB(res->tankR->format,      255, 0, 255));
-    SDL_SetColorKey(res->planeL,     SDL_SRCCOLORKEY, SDL_MapRGB(res->planeL->format,     255, 0, 255));
-    SDL_SetColorKey(res->planeR,     SDL_SRCCOLORKEY, SDL_MapRGB(res->planeR->format,     255, 0, 255));
-    SDL_SetColorKey(res->saucer,     SDL_SRCCOLORKEY, SDL_MapRGB(res->saucer->format,     255, 0, 255));
-    SDL_SetColorKey(res->background, SDL_SRCCOLORKEY, SDL_MapRGB(res->background->format, 255, 0, 255));
+    SDL_SetColorKey(res->helicoL,       SDL_SRCCOLORKEY, SDL_MapRGB(res->helicoL->format,       255, 0, 255));
+    SDL_SetColorKey(res->helicoR,       SDL_SRCCOLORKEY, SDL_MapRGB(res->helicoR->format,       255, 0, 255));
+    SDL_SetColorKey(res->base,          SDL_SRCCOLORKEY, SDL_MapRGB(res->base->format,          255, 0, 255));
+    SDL_SetColorKey(res->building,      SDL_SRCCOLORKEY, SDL_MapRGB(res->building->format,      255, 0, 255));
+    SDL_SetColorKey(res->buildingD,     SDL_SRCCOLORKEY, SDL_MapRGB(res->buildingD->format,     255, 0, 255));
+    SDL_SetColorKey(res->bomb,          SDL_SRCCOLORKEY, SDL_MapRGB(res->bomb->format,          255, 0, 255));
+    SDL_SetColorKey(res->bullet,        SDL_SRCCOLORKEY, SDL_MapRGB(res->bullet->format,        255, 0, 255));
+    SDL_SetColorKey(res->missileL,      SDL_SRCCOLORKEY, SDL_MapRGB(res->missileL->format,      255, 0, 255));
+    SDL_SetColorKey(res->missileR,      SDL_SRCCOLORKEY, SDL_MapRGB(res->missileR->format,      255, 0, 255));
+    SDL_SetColorKey(res->hostageL,      SDL_SRCCOLORKEY, SDL_MapRGB(res->hostageL->format,      255, 0, 255));
+    SDL_SetColorKey(res->hostageR,      SDL_SRCCOLORKEY, SDL_MapRGB(res->hostageR->format,      255, 0, 255));
+    SDL_SetColorKey(res->tankL,         SDL_SRCCOLORKEY, SDL_MapRGB(res->tankL->format,         255, 0, 255));
+    SDL_SetColorKey(res->tankR,         SDL_SRCCOLORKEY, SDL_MapRGB(res->tankR->format,         255, 0, 255));
+    SDL_SetColorKey(res->planeL,        SDL_SRCCOLORKEY, SDL_MapRGB(res->planeL->format,        255, 0, 255));
+    SDL_SetColorKey(res->planeR,        SDL_SRCCOLORKEY, SDL_MapRGB(res->planeR->format,        255, 0, 255));
+    SDL_SetColorKey(res->saucer,        SDL_SRCCOLORKEY, SDL_MapRGB(res->saucer->format,        255, 0, 255));
+    SDL_SetColorKey(res->background[0], SDL_SRCCOLORKEY, SDL_MapRGB(res->background[0]->format, 255, 0, 255));
+    SDL_SetColorKey(res->background[1], SDL_SRCCOLORKEY, SDL_MapRGB(res->background[1]->format, 255, 0, 255));
+    SDL_SetColorKey(res->background[2], SDL_SRCCOLORKEY, SDL_MapRGB(res->background[2]->format, 255, 0, 255));
 }
 
 void freeResources(GameResources *res)
@@ -75,7 +78,9 @@ void freeResources(GameResources *res)
     SDL_FreeSurface(res->planeL);
     SDL_FreeSurface(res->planeR);
     SDL_FreeSurface(res->saucer);
-    SDL_FreeSurface(res->background);
+    SDL_FreeSurface(res->background[0]);
+    SDL_FreeSurface(res->background[1]);
+    SDL_FreeSurface(res->background[2]);
 
     ///polices
     TTF_CloseFont(res->font);

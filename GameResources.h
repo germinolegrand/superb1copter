@@ -38,7 +38,7 @@ struct GameResources
                 *planeL,
                 *planeR,
                 *saucer,
-                *background;
+                *background[3];
 };
 
 void loadResources(GameResources *res);

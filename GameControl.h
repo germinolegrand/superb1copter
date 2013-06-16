@@ -19,6 +19,7 @@ struct GameControl
     float helicoSpeed,
           hostagesSpeed,
           bulletsSpeed,
+          bombsSpeed,
           tanksSpeed,
           planesSpeed,
           saucerSpeed;
